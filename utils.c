@@ -11,6 +11,7 @@ void msp_init(){
 #else
     P1DIR |= RST + PWR + TRIGGER; // outputs
 #endif
+    P1DIR &= ~ECHO; // input
     P1OUT = 0;
     P1SEL |= UART_RXD + UART_TXD ; // P1.1 = RXD, P1.2=TXD
     P1SEL2 |= UART_RXD + UART_TXD ;
@@ -42,22 +43,60 @@ void uart_send(const char* string){
 
 void uart_send_int(int value){
     char string[5];
-    //unsigned char i = 4;
     
     sprintf(string, "%d", value);
     uart_send(string);
 }
 
+void uart_send_float(float value){ // %6.2f
+
+    char string[7];
+    int integer;
+    int decimal;
+    
+    string[3] = '.';
+    string[6] = '\0';
+    
+    integer = (int)value;
+    decimal = (int)((value - integer) * 100);
+    
+    string[5] = (decimal % 10) + '0';
+    decimal = decimal / 10;
+    string[4] = (decimal % 10) + '0';
+    
+    string[2] = (integer % 10) + '0';
+    integer = integer / 10;
+    
+    string[1] = (integer > 0)? ((integer % 10) + '0') : ' ';
+    integer = integer / 10;
+    
+    string[0] = (integer > 0)? ((integer % 10) + '0') : ' ';
+    
+    // // if (integer >= 100)
+    // string[0] = (integer >= 100)? ((integer/100)+'0') : ' ';
+    
+    
+    
+    // if (integer >= 100)
+    //     sprintf(string, "%d.%d", integer, decimal);
+    // else
+    //     sprintf(string, " %d.%d", integer, decimal);
+    
+    uart_send(string);
+
+}
+
 void delay(unsigned short value){
     int i;
     
-    TA0CCR0 = 125; // 1ms
+    TACTL = TACLR;
+    TACCR0 = 125; // 1ms
     for (i=value; i > 0; i--){
-        TA0CTL = TASSEL_2 + MC_1 + ID_3; // SMCLK/8, upmode
+        TACTL = TASSEL_2 + MC_1 + ID_3; // SMCLK/8, upmode
         
-        while (! (TA0CTL & TAIFG));
+        while (! (TACTL & TAIFG));
         
-        TA0CTL = TACLR;
+        TACTL = TACLR;
     }
 }
 

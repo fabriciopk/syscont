@@ -13,21 +13,27 @@
 #define APN "zap.vivo.com.br"
 #endif
 
-
 #define APP_TOKEN "r2787aOAqE4ltiKG"
 #define APP_ID "teste123"
 #define THING_KEY "msp430"
 
-#define POST_HEADER "POST /api HTTP/1.1\r\nHost: api.devicewise.com\r\nContent-Length: %d\r\n\r\n" // 66 + 3 = 69
+#define TOKEN_API "5GYS1fPfJKOLG2h13Hzc"
+#define DEVICE_ID "1"
+#define URL "api.solveiot.com.br"
+
+//#define POST_HEADER "POST /api HTTP/1.1\r\nHost: api.devicewise.com\r\nContent-Length: %d\r\n\r\n" // 66 + 3 = 69
+#define POST_HEADER "POST /api HTTP/1.1\r\nHost: api.solveiot.com.br\r\nContent-Length: %d\r\n\r\n" // 67 + 3 = 70
+#define POST_API "{\"autent\":\""TOKEN_API"\",\"id\":"DEVICE_ID",\"waste\":" // 27 + 20 (token) + 1 (id) // + 6 (waste)
+
 #define API_AUTH "{\"auth\":{\"command\":\"api.authenticate\",\"params\":{\"appToken\":\"%s\",\"appId\":\"%s\",\"thingKey\":\"%s\"}}}" // 89 + 30 = 119
 #define API_PUBLISH "{\"auth\":{\"sessionId\":\"%s\"},\"1\":{\"command\":\"property.publish\",\"params\":{\"thingKey\":\"%s\",\"key\":\"trash_level\",\"value\":%d}}}" // 114
 #define API_END_SESSION "{\"auth\":{\"sessionId\":\"%s\"},\"1\":{\"command\":\"session.end\",\"params\":{\"id\":\"%s\"}}}"
 
 void gprs_init();
 void gprs_connect();
-void gprs_auth();
-void gprs_send_volume(int);
-void gprs_disconnect();
+//void gprs_auth();
+void gprs_send_volume(float);
+//void gprs_disconnect();
 void get_coordinates();
 void gprs_reset();
 void gprs_powerCycle();

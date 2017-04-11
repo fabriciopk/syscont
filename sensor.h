@@ -4,6 +4,9 @@
 
 #include "utils.h"
 
-void trigger_sensor();
+//volatile unsigned char TIMER_FLAG;
+
+unsigned short read_sensor_cm();
+float sensor_get();
 
 #endif

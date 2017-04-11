@@ -11,7 +11,7 @@ char *AT_COMMANDS[] = {
     "AT+CGDCONT=1, \"IP\", \""APN"\"\r\n",
     "AT+CGACT=1,1\r\n",
     "AT+CIFSR\r\n",
-    "AT+CIPSTART=\"TCP\",\"api.devicewise.com\",80\r\n",
+    "AT+CIPSTART=\"TCP\",\""URL"\",80\r\n",
     "AT+CIPSEND=",
     "AT+CIPSHUT\r\n",
     "AT+GPS=1\r\n",
@@ -102,11 +102,12 @@ void gprs_connect(){
     do{
         uart_buffer_clear();
         uart_send(AT_COMMANDS[CONN_TCP]);
-    } while((init = waitFor(AT_ANS[CONN_TCP], "ERROR", 15000)) != 1);
+    } while((init = waitFor(AT_ANS[CONN_TCP], "ERROR", 20000)) != 1);
     uart_buffer_clear();
     
 }
 
+/*
 void gprs_auth(){
     gprs_connect();
     
@@ -198,6 +199,37 @@ void gprs_disconnect(){
     
     UC0IE &= ~UCA0RXIE; // Disable USCI_A0 RX interrupt
 }
+*/
+
+void gprs_send_volume(float value){
+    gprs_connect();
+    
+    uart_send(AT_COMMANDS[SEND_DATA]);
+    
+    uart_send_int(sizeof(POST_HEADER) + sizeof(POST_API) + 5);
+    uart_send("\r\n");
+    
+    waitFor(AT_ANS[SEND_DATA], 0, 5000);
+    uart_buffer_clear();
+    
+    UC0IE &= ~UCA0RXIE; // Disable USCI_A0 RX interrupt
+    
+    sprintf(UART_BUFFER, POST_HEADER, sizeof(POST_API) + 6);
+    uart_send(UART_BUFFER);
+    
+    sprintf(UART_BUFFER, POST_API);
+    uart_send(UART_BUFFER);
+    uart_send_float(value);
+    uart_send("}");
+    uart_buffer_clear();
+    
+    UC0IE |= UCA0RXIE; // Enable USCI_A0 RX interrupt
+    
+    if (waitFor("success\": true", "ERROR", 17000) == 1){
+        data_sent = 1;
+    }
+    uart_buffer_clear();
+}
 
 void get_coordinates(){
     uart_send(AT_COMMANDS[GPS_ON]);
@@ -210,7 +242,9 @@ void get_coordinates(){
     
     unsigned char i;
     for (i=0; i<3; i++){
+#ifdef DEBUG
         ledToggle(RED_LED);
+#endif
         waitFor("GPGGA", "ERROR", 2000);
         uart_buffer_clear();
         
