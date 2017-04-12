@@ -7,7 +7,9 @@ unsigned short read_sensor_cm(){
     float aux;
     
     P1OUT |= TRIGGER;
-    for (i=0;i<9;i++); // ~ 10us at 1MHz
+    // ~ 10us at 1MHz
+    i = 0;
+    i = 1;
     P1OUT &= ~TRIGGER;
     
     TA0CTL = TACLR;
