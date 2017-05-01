@@ -3,10 +3,14 @@
 #define __sysclean_sensor__
 
 #include "utils.h"
+#include <stdint.h>
 
 //volatile unsigned char TIMER_FLAG;
 
-unsigned short read_sensor_cm();
-float sensor_get();
+#define MIN_VALUE 20
+#define MAX_VALUE 150
+
+double read_sensor_cm();
+double sensor_get();
 
 #endif

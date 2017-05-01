@@ -1,10 +1,9 @@
 #include "sensor.h"
 
-unsigned short read_sensor_cm(){
-    volatile unsigned char i;
-    unsigned long timer;
-    unsigned short distance;
-    float aux;
+double read_sensor_cm(){
+    volatile uint8_t i;
+    uint16_t timer;
+    double aux;
     
     P1OUT |= TRIGGER;
     // ~ 10us at 1MHz
@@ -29,39 +28,40 @@ unsigned short read_sensor_cm(){
 #endif
     TA0CTL = TACLR;
     
-    aux = (float)timer * 0.01715;
+    aux = (double)timer * 0.01715;
     
-    return (unsigned short)aux;
+    return aux;
 }
 
-float sensor_get(){
-    unsigned short measures[5];
-    unsigned short maior, menor;
-    unsigned int soma;
-    unsigned char i;
+double sensor_get(){
+    double measures[5];
+    double maior, menor;
+    double soma;
+    uint8_t i;
+    uint8_t count = 0;
     
     delay(3000);
     
-    for (i=0; i<5; i++){
-        measures[i] = read_sensor_cm();
-        delay(2000);
-    }
-    
-    maior = measures[0];
-    menor = measures[0];
-    
     soma = 0;
     
-    for (i=1; i<5; i++){
-        soma += measures[i];
+    for (i=0; i<5; i++){
+        measures[i] = read_sensor_cm();
         
-        if (measures[i] > maior) maior = measures[i];
-        if (measures[i] < menor) menor = measures[i];
+        if (measures[i] < MIN_VALUE || measures[i] > MAX_VALUE){
+            i--;
+        } else{
+            soma += measures[i];
+        }
+        
+        if (count >= 10) break; // i >= 4
+        count++;
+        
+        delay(1000);
     }
     
-    // Remove os dois extremos da media
-    soma -= maior;
-    soma -= menor;
+    if (count >= 10){
+        return 0;
+    }
     
-    return ((float)soma/3);
+    return (soma/5);
 }

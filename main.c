@@ -9,13 +9,14 @@
  */
  
 // #define TEMPO_SLEEP 40 // 20 seg
-// #define TEMPO_SLEEP 120 // 1 min
-#define TEMPO_SLEEP 600 // 5 min
+#define TEMPO_SLEEP 120 // 1 min
+// #define TEMPO_SLEEP 240 // 2 min
+// #define TEMPO_SLEEP 600 // 5 min
 // #define TEMPO_SLEEP 28800 // 4 hrs
  
 volatile static unsigned int i;
 //volatile static unsigned int tempo; // * 0.5s
-volatile float distance;
+volatile double distance;
 
  
 void configureIntTimer(void);
@@ -25,19 +26,16 @@ int main(void)
     WDTCTL = WDTPW + WDTHOLD; // Stop WDT
     i = 0;
     msp_init();
+    // __bic_SR_register(GIE); // disable global interrupt flag
     
+    gprs_powerCycle();
     delay(2000);
     gprs_reset();
-    
-    //get_coordinates();
-    //gprs_auth();
     
     configureIntTimer();
     // __bis_SR_register(CPUOFF + SCG0);
     __bis_SR_register(CPUOFF);
     
-    while (1){
-    }
 }
 
 void configureIntTimer(void){
@@ -59,7 +57,7 @@ __interrupt void Timer_A (void)
         gprs_powerCycle();
         gprs_init();
         delay(2000);
-        gprs_send_volume(distance);
+        gprs_send_volume((float)distance);
         gprs_reset();
         
         i = 0;

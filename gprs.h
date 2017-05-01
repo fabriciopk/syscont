@@ -45,22 +45,18 @@ char sessionId[30];
 
 enum at_command {
     AT = 0,
-    DIS_ECHO,
-    SET_BAUD_RATE,
-    NETWORK_REGIST,
-    EN_SHOW_OPERATOR,
-    CHECK_OPERATOR,
-    ATTACH,
-    SET_PDP_CONTEXT,
-    ACTIVATE_PDP_CONTEXT,
-    GET_IP,
-    CONN_TCP,
-    SEND_DATA,
-    CLOSE_TCP,
-    GPS_ON,
-    GPS_OFF,
-    GPS_AT_ON,
-    GPS_AT_OFF,
+    DIS_ECHO = 1,
+    SET_BAUD_RATE = 2,
+    NETWORK_REGIST = 3,
+    EN_SHOW_OPERATOR = 4,
+    CHECK_OPERATOR = 5,
+    ATTACH = 6,
+    SET_PDP_CONTEXT = 7,
+    ACTIVATE_PDP_CONTEXT = 8,
+    GET_IP = 9,
+    CONN_TCP = 10,
+    SEND_DATA = 11,
+    CLOSE_TCP = 12
 };
 
 #endif

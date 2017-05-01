@@ -13,11 +13,7 @@ char *AT_COMMANDS[] = {
     "AT+CIFSR\r\n",
     "AT+CIPSTART=\"TCP\",\""URL"\",80\r\n",
     "AT+CIPSEND=",
-    "AT+CIPSHUT\r\n",
-    "AT+GPS=1\r\n",
-    "AT+GPS=0\r\n",
-    "AT+GPSRD=1\r\n",
-    "AT+GPSRD=0\r\n"
+    "AT+CIPSHUT\r\n"
 };
 
 char *AT_ANS[] = {
@@ -33,10 +29,6 @@ char *AT_ANS[] = {
     "OK\r\n",
     "OK\r\n",
     "> ",
-    "OK\r\n",
-    "OK\r\n",
-    "OK\r\n",
-    "OK\r\n",
     "OK\r\n"
 };
 
@@ -204,7 +196,8 @@ void gprs_disconnect(){
 void gprs_send_volume(float value){
     gprs_connect();
     
-    uart_send(AT_COMMANDS[SEND_DATA]);
+    uart_buffer_clear();
+    uart_send(AT_COMMANDS[11]);
     
     uart_send_int(sizeof(POST_HEADER) + sizeof(POST_API) + 5);
     uart_send("\r\n");
@@ -231,7 +224,7 @@ void gprs_send_volume(float value){
     uart_buffer_clear();
 }
 
-void get_coordinates(){
+/*void get_coordinates(){
     uart_send(AT_COMMANDS[GPS_ON]);
     waitFor(AT_ANS[GPS_ON], 0, 10000);
     uart_buffer_clear();
@@ -263,7 +256,7 @@ void get_coordinates(){
     waitFor(AT_ANS[GPS_OFF], 0, 5000);
     uart_buffer_clear();
 }
-
+*/
 void gprs_reset(){
     P1OUT |= RST;
     delay(20);
