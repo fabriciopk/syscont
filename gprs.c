@@ -5,7 +5,7 @@ char *AT_COMMANDS[] = {
     "ATE0\r\n",
     "AT+IPR=115200\r\n",
     "AT+CREG?\r\n",
-    "AT+COPS=0,0\r\n",
+    "AT+COPS=3,0\r\n",
     "AT+COPS?\r\n",
     "AT+CGATT=1\r\n",
     "AT+CGDCONT=1, \"IP\", \""APN"\"\r\n",
@@ -64,11 +64,11 @@ void gprs_init(){
     
 #ifdef DEBUG
     uart_send(AT_COMMANDS[EN_SHOW_OPERATOR]);
-    waitFor(AT_ANS[EN_SHOW_OPERATOR], 0, 5000);
+    waitFor(AT_ANS[EN_SHOW_OPERATOR], 0, 2000);
     uart_buffer_clear();
     
     uart_send(AT_COMMANDS[CHECK_OPERATOR]);
-    waitFor(AT_ANS[CHECK_OPERATOR], 0, 7000);
+    waitFor(AT_ANS[CHECK_OPERATOR], 0, 2000);
     uart_buffer_clear();
 #endif
 }
@@ -94,7 +94,7 @@ void gprs_connect(){
     do{
         uart_buffer_clear();
         uart_send(AT_COMMANDS[CONN_TCP]);
-    } while((init = waitFor(AT_ANS[CONN_TCP], "ERROR", 20000)) != 1);
+    } while((init = waitFor(AT_ANS[CONN_TCP], "ERROR", 25000)) != 1);
     uart_buffer_clear();
     
 }

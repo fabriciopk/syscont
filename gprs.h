@@ -18,7 +18,7 @@
 #define THING_KEY "msp430"
 
 #define TOKEN_API "5GYS1fPfJKOLG2h13Hzc"
-#define DEVICE_ID "1"
+#define DEVICE_ID "2"
 #define URL "api.solveiot.com.br"
 
 //#define POST_HEADER "POST /api HTTP/1.1\r\nHost: api.devicewise.com\r\nContent-Length: %d\r\n\r\n" // 66 + 3 = 69
