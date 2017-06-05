@@ -22,7 +22,7 @@ char *AT_ANS[] = {
     "OK\r\n",
     "CREG: 1",
     "OK\r\n",
-    "COPS: 0",
+    "COPS: 1,",
     "OK\r\n",
     "OK\r\n",
     "OK\r\n",
@@ -75,7 +75,7 @@ void gprs_init(){
 
 void gprs_connect(){
     uart_send(AT_COMMANDS[ATTACH]);
-    waitFor(AT_ANS[ATTACH], 0, 15000);
+    waitFor(AT_ANS[ATTACH], 0, 25000);
     uart_buffer_clear();
     
     uart_send(AT_COMMANDS[SET_PDP_CONTEXT]);
@@ -83,7 +83,7 @@ void gprs_connect(){
     uart_buffer_clear();
     
     uart_send(AT_COMMANDS[ACTIVATE_PDP_CONTEXT]);
-    waitFor(AT_ANS[ACTIVATE_PDP_CONTEXT], "ERROR", 10000);
+    waitFor(AT_ANS[ACTIVATE_PDP_CONTEXT], "ERROR", 35000);
     uart_buffer_clear();
     
 #ifdef DEBUG
@@ -98,100 +98,6 @@ void gprs_connect(){
     uart_buffer_clear();
     
 }
-
-/*
-void gprs_auth(){
-    gprs_connect();
-    
-    uart_send(AT_COMMANDS[SEND_DATA]);
-    uart_send_int(sizeof(API_AUTH) + sizeof(THING_KEY) + sizeof(APP_ID) + 
-        sizeof (APP_TOKEN) - 10 + sizeof(POST_HEADER));  // -6 %s -4 \0
-    uart_send("\r\n");
-    
-    waitFor(AT_ANS[SEND_DATA], 0, 5000);
-    uart_buffer_clear();
-    
-    UC0IE &= ~UCA0RXIE; // Disable USCI_A0 RX interrupt
-    
-    sprintf(UART_BUFFER, POST_HEADER, (sizeof(API_AUTH) + sizeof(THING_KEY) + 
-        sizeof(APP_ID) + sizeof (APP_TOKEN) - 10));
-    uart_send(UART_BUFFER);
-    
-    sprintf(UART_BUFFER, API_AUTH, APP_TOKEN, APP_ID, THING_KEY);
-    uart_send(UART_BUFFER);
-    uart_buffer_clear();
-    
-    UC0IE |= UCA0RXIE; // Enable USCI_A0 RX interrupt
-    
-    if (waitFor("sessionId", "ERROR", 15000) == 1){ // extract sessionId
-        unsigned char sessionIdIndex = buffer_find("\"sessionId\":\"");
-        
-        unsigned char i=0;
-        while(UART_BUFFER[sessionIdIndex] != '\"'){
-            sessionId[i++] = UART_BUFFER[sessionIdIndex++];
-        }
-        
-        sessionId[i] = '\0';
-        connected = 1;
-    }
-    uart_buffer_clear();
-}
-
-void gprs_send_volume(int value){
-    uart_send(AT_COMMANDS[SEND_DATA]);
-    uart_send_int(sizeof(API_PUBLISH) + sizeof(THING_KEY) + 
-        strlen(sessionId) + sizeof(POST_HEADER) -6);  // -8 %s -3 '\0' +2 value +3 content-length
-    uart_send("\r\n");
-    
-    waitFor(AT_ANS[SEND_DATA], 0, 5000);
-    uart_buffer_clear();
-    
-    UC0IE &= ~UCA0RXIE; // Disable USCI_A0 RX interrupt
-    
-    sprintf(UART_BUFFER, POST_HEADER, (sizeof(API_PUBLISH) + sizeof(THING_KEY) + strlen(sessionId) -6));
-    uart_send(UART_BUFFER);
-    
-    sprintf(UART_BUFFER, API_PUBLISH, sessionId, THING_KEY, value);
-    uart_send(UART_BUFFER);
-    uart_buffer_clear();
-    
-    UC0IE |= UCA0RXIE; // Enable USCI_A0 RX interrupt
-    
-    if (waitFor("success\":true", "ERROR", 17000) == 1){
-        data_sent = 1;
-    }
-    uart_buffer_clear();
-}
-
-void gprs_disconnect(){
-    connected = 0;
-    
-    uart_send(AT_COMMANDS[SEND_DATA]);
-    uart_send_int(sizeof(POST_HEADER) + sizeof(API_END_SESSION) + 2*strlen(sessionId) -5);
-    uart_send("\r\n");
-    
-    waitFor(AT_ANS[SEND_DATA], 0, 5000);
-    uart_buffer_clear();
-    
-    UC0IE &= ~UCA0RXIE; // Disable USCI_A0 RX interrupt
-    
-    sprintf(UART_BUFFER, POST_HEADER, (sizeof(API_END_SESSION) + 2*strlen(sessionId) -5));
-    uart_send(UART_BUFFER);
-    
-    sprintf(UART_BUFFER, API_END_SESSION, sessionId, sessionId);
-    uart_send(UART_BUFFER);
-    uart_buffer_clear();
-    
-    UC0IE |= UCA0RXIE; // Enable USCI_A0 RX interrupt
-    waitFor("success\":true", "ERROR", 17000);
-    uart_buffer_clear();
-    
-    uart_send(AT_COMMANDS[CLOSE_TCP]);
-    waitFor("OK\r\n", 0, 10000);
-    
-    UC0IE &= ~UCA0RXIE; // Disable USCI_A0 RX interrupt
-}
-*/
 
 void gprs_send_volume(float value){
     gprs_connect();
@@ -224,39 +130,6 @@ void gprs_send_volume(float value){
     uart_buffer_clear();
 }
 
-/*void get_coordinates(){
-    uart_send(AT_COMMANDS[GPS_ON]);
-    waitFor(AT_ANS[GPS_ON], 0, 10000);
-    uart_buffer_clear();
-    
-    uart_send(AT_COMMANDS[GPS_AT_ON]);
-    waitFor(AT_ANS[GPS_AT_ON], 0, 5000);
-    uart_buffer_clear();
-    
-    unsigned char i;
-    for (i=0; i<3; i++){
-#ifdef DEBUG
-        ledToggle(RED_LED);
-#endif
-        waitFor("GPGGA", "ERROR", 2000);
-        uart_buffer_clear();
-        
-        //if (waitFor("GPRMC", "ERROR", 2000) == 1){
-        // extract coordinates
-        //}
-    }
-    
-    uart_buffer_clear();
-    
-    uart_send(AT_COMMANDS[GPS_AT_OFF]);
-    waitFor(AT_ANS[GPS_AT_OFF], 0, 5000);
-    uart_buffer_clear();
-    
-    uart_send(AT_COMMANDS[GPS_OFF]);
-    waitFor(AT_ANS[GPS_OFF], 0, 5000);
-    uart_buffer_clear();
-}
-*/
 void gprs_reset(){
     P1OUT |= RST;
     delay(20);
