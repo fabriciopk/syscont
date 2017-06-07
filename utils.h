@@ -30,10 +30,11 @@ void msp_init();
 void uart_send(const char*);
 void uart_send_buffer(const char*, int);
 void uart_send_int(int);
-void uart_send_float(float); // %6.2f
 void uart_buffer_clear();
 void delay(unsigned short);
 int buffer_find(const char *);
-int waitFor(const char *ans, const char *error, unsigned short time);
+int waitFor(const char*, const char*, unsigned short);
+void floatToBytes(float, unsigned char*, unsigned char*);
+void generatePayload(unsigned char*, float, float);
 
 #endif

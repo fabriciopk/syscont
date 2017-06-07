@@ -42,7 +42,7 @@ void uart_send(const char* string){
 }
 
 void uart_send_buffer(const char *buf, int len){
-    int i;
+    unsigned int i;
     
     for (i=0; i<len; i++){
         UCA0TXBUF = buf[i];
@@ -56,44 +56,6 @@ void uart_send_int(int value){
     
     sprintf(string, "%d", value);
     uart_send(string);
-}
-
-void uart_send_float(float value){ // %6.2f
-
-    char string[7];
-    int integer;
-    int decimal;
-    
-    string[3] = '.';
-    string[6] = '\0';
-    
-    integer = (int)value;
-    decimal = (int)((value - integer) * 100);
-    
-    string[5] = (decimal % 10) + '0';
-    decimal = decimal / 10;
-    string[4] = (decimal % 10) + '0';
-    
-    string[2] = (integer % 10) + '0';
-    integer = integer / 10;
-    
-    string[1] = (integer > 0)? ((integer % 10) + '0') : ' ';
-    integer = integer / 10;
-    
-    string[0] = (integer > 0)? ((integer % 10) + '0') : ' ';
-    
-    // // if (integer >= 100)
-    // string[0] = (integer >= 100)? ((integer/100)+'0') : ' ';
-    
-    
-    
-    // if (integer >= 100)
-    //     sprintf(string, "%d.%d", integer, decimal);
-    // else
-    //     sprintf(string, " %d.%d", integer, decimal);
-    
-    uart_send(string);
-
 }
 
 void delay(unsigned short value){
@@ -111,7 +73,7 @@ void delay(unsigned short value){
 }
 
 void uart_buffer_clear(){
-    memset(UART_BUFFER, 0, BUFFER_SIZE);
+    memset((void*)UART_BUFFER, 0, BUFFER_SIZE);
     UART_INDEX = 0;
 }
 
@@ -163,4 +125,42 @@ int waitFor(const char *ans, const char *error, unsigned short time){
     ledOff(RED_LED);
 #endif
     return 1;
+}
+
+void floatToBytes(float value, unsigned char *integ, unsigned char* dec){
+    int integer;
+    int decimal;
+    
+    integer = (int)value;
+    decimal = (int)((value - integer) * 100);
+    
+    *integ = (unsigned char)integer;
+    *dec = (unsigned char)decimal;
+    
+    return;
+}
+
+void generatePayload(unsigned char *dst, float distance, float battery){
+    unsigned char d_i, d_r, b_i, b_r, i;
+    
+    floatToBytes(distance, &d_i, &d_r);
+    floatToBytes(battery, &b_i, &b_r);
+    
+    dst[1] = d_r;
+    dst[2] = b_r;
+    dst[3] = b_i;
+    dst[4] = d_i;
+    
+    unsigned char hash = 0;
+    
+    for (i=4; i>0; i--){
+        hash ^= dst[i]; 
+    }
+    
+    hash = hash >> 1;
+    hash += 69;
+    
+    dst[0] = hash;
+    
+    return;
 }

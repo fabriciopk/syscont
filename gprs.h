@@ -13,16 +13,16 @@
 #define APN "zap.vivo.com.br"
 #endif
 
-#define TOKEN_API ""
+//#define TOKEN_API ""
 #define DEVICE_ID '2'
 #define URL "mqtt.dalmago.xyz"
                                 
 #define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
-#define MQTT_PUBLISH_TOPIC "s/d"
+#define MQTT_PUBLISH_TOPIC "s/DEVICE_ID"
 
 void gprs_init();
 void gprs_connect();
-void gprs_send_volume(float);
+void gprs_send_data(float, float);
 void get_coordinates();
 void gprs_reset();
 void gprs_powerCycle();
@@ -30,7 +30,6 @@ void gprs_powerCycle();
 unsigned char init;
 unsigned char connected;
 unsigned char data_sent;
-char sessionId[30];
 
 enum at_command {
     AT = 0,

@@ -36,7 +36,7 @@ const char MQTT_CONNECT[] = {
                               0x10,  // CONNECT
                               35,     // Remaining Length
                               0, 6, 'M', 'Q', 'I', 's', 'd', 'p', 3, // Protocol
-                              0xC2,   // Clean Session + Will Flag + Will Retain
+                              0xC2,   // Username Flag + Password Flag + Clean Session
                               0, 20,  // Keep Alive
                               0, 2, 's', DEVICE_ID, // Client Id
                               0, 7, 'd', 'a', 'l', 'm', 'a', 'g', 'o', // Username
@@ -87,7 +87,7 @@ void gprs_connect(){
     do{
         uart_buffer_clear();
         uart_send(AT_COMMANDS[ATTACH]);
-    } while (waitFor(AT_ANS[ATTACH], "ERROR", 15000) != 1);
+    } while (waitFor(AT_ANS[ATTACH], "ERROR", 25000) != 1);
     
     uart_buffer_clear();
     uart_send(AT_COMMANDS[SET_PDP_CONTEXT]);
@@ -110,47 +110,42 @@ void gprs_connect(){
     } while((init = waitFor(AT_ANS[CONN_TCP], "ERROR", 25000)) != 1);
     uart_buffer_clear();
     
-    
-    // MQTT CONNECT
-    uart_send(AT_COMMANDS[11]);
-    uart_send_int(sizeof(MQTT_CONNECT));
-    uart_send("\r\n");
-    uart_buffer_clear();
-    
-    waitFor("> ", 0, 2500);
-    uart_buffer_clear();
-    
-    uart_send_buffer(MQTT_CONNECT, sizeof(MQTT_CONNECT));
-    
-    uart_buffer_clear();
-    return waitFor("CIPRCV", 0, 7500);
+    return;
 }
 
-void gprs_send_volume(float value){
+void gprs_send_data(float distance, float battery){
     gprs_connect();
     
-    char publish[4];
+    unsigned char payload[5];
+    generatePayload(payload, distance, battery);
+    
+    // MQTT
+    unsigned char publish[4];
     publish[0] = MQTT_PUBLISH_FIRST_BYTE;
-    publish[1] = 6 + sizeof(MQTT_PUBLISH_TOPIC) - 1 + 2; // data length = 6
+    publish[1] = sizeof(payload) + sizeof(MQTT_PUBLISH_TOPIC) - 1 + 2;
     publish[2] = 0;
     publish[3] = sizeof(MQTT_PUBLISH_TOPIC) -1;
     
     uart_buffer_clear();
     uart_send(AT_COMMANDS[11]);
-    uart_send_int(sizeof(publish) + sizeof(MQTT_PUBLISH_TOPIC) - 1 + 6);
+    uart_send_int(sizeof(MQTT_CONNECT) + sizeof(publish) + 
+                            sizeof(MQTT_PUBLISH_TOPIC) - 1 + sizeof(payload));
     uart_send("\r\n");
     
-    waitFor("> ", 0, 2500);
+    waitFor("> ", 0, 3500);
     uart_buffer_clear();
     
+    uart_send_buffer(MQTT_CONNECT, sizeof(MQTT_CONNECT));
     uart_send_buffer(publish, sizeof(publish));
     uart_send(MQTT_PUBLISH_TOPIC);
-    uart_send_float(value);
+    uart_send_buffer(payload, sizeof(payload));
     
-    if (waitFor(AT_ANS[11], 0, 10000) == 1){
-        data_sent = 1;
-    }
     uart_buffer_clear();
+    waitFor("CIPRCV", 0, 1000);
+    
+    uart_buffer_clear();
+    
+    // data_sent?
 }
 
 void gprs_reset(){
