@@ -41,6 +41,16 @@ void uart_send(const char* string){
     }
 }
 
+void uart_send_buffer(const char *buf, int len){
+    int i;
+    
+    for (i=0; i<len; i++){
+        UCA0TXBUF = buf[i];
+        while(! (UC0IFG & UCA0TXIFG));
+    }
+    
+}
+
 void uart_send_int(int value){
     char string[5];
     
@@ -149,5 +159,8 @@ int waitFor(const char *ans, const char *error, unsigned short time){
         }
     } while(! buffer_find(ans));
     
+#ifdef DEBUG
+    ledOff(RED_LED);
+#endif
     return 1;
 }

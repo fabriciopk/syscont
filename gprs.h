@@ -13,16 +13,12 @@
 #define APN "zap.vivo.com.br"
 #endif
 
-#define APP_TOKEN "r2787aOAqE4ltiKG"
-#define APP_ID "teste123"
-#define THING_KEY "msp430"
-
-#define TOKEN_API "5GYS1fPfJKOLG2h13Hzc"
-#define DEVICE_ID "2"
-#define URL "api.solveiot.com.br"
-
-#define POST_HEADER "POST /api HTTP/1.1\r\nHost: api.solveiot.com.br\r\nContent-Length: %d\r\n\r\n" // 67 + 3 = 70
-#define POST_API "{\"autent\":\""TOKEN_API"\",\"id\":"DEVICE_ID",\"waste\":" // 27 + 20 (token) + 1 (id) // + 6 (waste)
+#define TOKEN_API ""
+#define DEVICE_ID '2'
+#define URL "mqtt.dalmago.xyz"
+                                
+#define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
+#define MQTT_PUBLISH_TOPIC "s/d"
 
 void gprs_init();
 void gprs_connect();

@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-// #define DEBUG
+#define DEBUG
 
 #define RED_LED BIT0
 #define GREEN_LED BIT6
@@ -28,6 +28,7 @@ volatile unsigned short TIMER_WAITFOR_COUNTER;
 
 void msp_init();
 void uart_send(const char*);
+void uart_send_buffer(const char*, int);
 void uart_send_int(int);
 void uart_send_float(float); // %6.2f
 void uart_buffer_clear();
