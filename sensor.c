@@ -33,7 +33,7 @@ double read_sensor_cm(){
     return aux;
 }
 
-double sensor_get(){
+float sensor_get(){
     double measures[5];
     double maior, menor;
     double soma;

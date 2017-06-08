@@ -4,6 +4,7 @@
 
 #include <msp430.h>
 #include "utils.h"
+#include "msp-cpu.h"
 
 // #define TELIT_SIM
 
@@ -18,7 +19,7 @@
 #define URL "mqtt.dalmago.xyz"
                                 
 #define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
-#define MQTT_PUBLISH_TOPIC "s/DEVICE_ID"
+#define MQTT_PUBLISH_TOPIC "s/2"
 
 void gprs_init();
 void gprs_connect();
