@@ -4,6 +4,7 @@
 #include <msp430.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include "utils.h"
 
 #define ledOn(led) (P1OUT |= (led))
@@ -15,5 +16,6 @@ void uart_send(const char*);
 void uart_send_buffer(const char*, int);
 void delay(unsigned short);
 void uart_buffer_clear();
+float read_battery();
 
 #endif

@@ -8,13 +8,15 @@
 #define DEBUG
 
 #define RED_LED BIT0
-// #define GREEN_LED BIT6
+#define VCC_2 BIT6
 #define UART_TXD BIT2
 #define UART_RXD BIT1
 #define PWR BIT4
 #define RST BIT5
 #define TRIGGER BIT7
 #define ECHO BIT3
+
+#define VOLTAGE_DIVIDER_FACTOR 2 // for the VCC
 
 #define BUFFER_SIZE 256
 volatile char UART_BUFFER[BUFFER_SIZE];

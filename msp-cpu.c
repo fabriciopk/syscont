@@ -11,7 +11,7 @@ void msp_init(){
 #else
     P1DIR |= RST + PWR + TRIGGER; // outputs
 #endif
-    P1DIR &= ~ECHO; // input
+    P1DIR &= ~(ECHO + VCC_2); // input
     P1OUT = 0;
     P1SEL |= UART_RXD + UART_TXD ; // P1.1 = RXD, P1.2=TXD
     P1SEL2 |= UART_RXD + UART_TXD ;
@@ -75,4 +75,26 @@ __interrupt void USCI0RX_ISR(void)
 {
     UART_BUFFER[UART_INDEX++] = UCA0RXBUF;
     UART_BUFFER[UART_INDEX] = '\0';
+}
+
+float read_battery(){
+    unsigned short value;
+    
+    ADC10CTL1 = INCH_6 + ADC10DIV_3 ;         // Channel 6, ADC10CLK/3
+	ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON;  // Vcc & Vss as reference, Sample and hold for 64 Clock cycles, ADC on
+	ADC10AE0 |= VCC_2;                         // ADC input enable P1.3
+	
+	ADC10CTL0 |= ENC + ADC10SC;			// Sampling and conversion start
+	
+	while(!(ADC10CTL0 | ADC10IFG));
+	
+	value = ADC10MEM;
+	
+	double v = value * (3.3 / 1023);
+	
+	v = v * VOLTAGE_DIVIDER_FACTOR;
+	
+	ADC10CTL0 = 0; // disable ADC
+	
+	return (float)v;
 }

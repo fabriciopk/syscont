@@ -1,8 +1,8 @@
-#include <msp430.h> 
+#include <msp430.h>
+#include "msp-cpu.h"
 #include "utils.h"
 #include "sensor.h"
 #include "gprs.h"
-
 
 /*
  * main.c
@@ -16,7 +16,8 @@
  
 volatile static unsigned int i;
 //volatile static unsigned int tempo; // * 0.5s
-volatile double distance;
+volatile float distance;
+volatile float battery;
 
  
 void configureIntTimer(void);
@@ -26,11 +27,8 @@ int main(void)
     WDTCTL = WDTPW + WDTHOLD; // Stop WDT
     i = 0;
     msp_init();
+    read_battery();
     // __bic_SR_register(GIE); // disable global interrupt flag
-    
-    gprs_powerCycle();
-    delay(2000);
-    gprs_reset();
     
     configureIntTimer();
     // __bis_SR_register(CPUOFF + SCG0);
@@ -52,12 +50,13 @@ __interrupt void Timer_A (void)
         TACCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
         __bis_SR_register(GIE); // enable global interrupt flag
         
-        distance = sensor_get();
+        //distance = sensor_get();
+        distance = 255.255;
+        battery = read_battery();
         
         gprs_powerCycle();
         gprs_init();
-        delay(2000);
-        gprs_send_volume((float)distance);
+        gprs_send_data(distance, battery);
         gprs_reset();
         
         i = 0;
