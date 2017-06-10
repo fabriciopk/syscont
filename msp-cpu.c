@@ -16,9 +16,8 @@ void msp_init(){
     P1SEL |= UART_RXD + UART_TXD ; // P1.1 = RXD, P1.2=TXD
     P1SEL2 |= UART_RXD + UART_TXD ;
     
-    // reduce power consumption
-    P2DIR = 0xFF; // All P2.x outputs
-    P2OUT = 0; // All P2.x reset
+    P2DIR = 0xFF; // All P2.x outputs, reduce power consumption
+    P2OUT = BOARD_ON_OFF;
     
     UCA0CTL1 |= UCSSEL_2; // SMCLK
     

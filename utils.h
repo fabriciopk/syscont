@@ -7,14 +7,18 @@
 
 #define DEBUG
 
+// P1
 #define RED_LED BIT0
-#define VCC_2 BIT6
-#define UART_TXD BIT2
 #define UART_RXD BIT1
+#define UART_TXD BIT2
+#define ECHO BIT3
 #define PWR BIT4
 #define RST BIT5
+#define VCC_2 BIT6
 #define TRIGGER BIT7
-#define ECHO BIT3
+
+// P2
+#define BOARD_ON_OFF BIT0
 
 #define VOLTAGE_DIVIDER_FACTOR 2 // for the VCC
 

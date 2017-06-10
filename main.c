@@ -31,9 +31,10 @@ int main(void)
     // __bic_SR_register(GIE); // disable global interrupt flag
     
     configureIntTimer();
-    // __bis_SR_register(CPUOFF + SCG0);
-    __bis_SR_register(CPUOFF);
+    LPM0; // LOW POWER MODE 0
+    //LPM0_EXIT;
     
+    while(1);
 }
 
 void configureIntTimer(void){
@@ -50,6 +51,8 @@ __interrupt void Timer_A (void)
         TACCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
         __bis_SR_register(GIE); // enable global interrupt flag
         
+        boardOn();
+        
         //distance = sensor_get();
         distance = 255.255;
         battery = read_battery();
@@ -57,7 +60,9 @@ __interrupt void Timer_A (void)
         gprs_powerCycle();
         gprs_init();
         gprs_send_data(distance, battery);
-        gprs_reset();
+        
+        // gprs_reset();
+        boardOff();
         
         i = 0;
         __bic_SR_register(GIE); // disable global interrupt flag
