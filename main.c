@@ -53,8 +53,7 @@ __interrupt void Timer_A (void)
         
         boardOn();
         
-        //distance = sensor_get();
-        distance = 255.255;
+        distance = sensor_get();
         battery = read_battery();
         
         gprs_powerCycle();

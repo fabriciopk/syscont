@@ -11,7 +11,7 @@ char *AT_COMMANDS[] = {
     "AT+CGDCONT=1,\"IP\",\""APN"\"\r\n",
     "AT+CGACT=1,1\r\n",
     "AT+CIFSR\r\n",
-    "AT+CIPSTART=\"TCP\",\""URL"\",80\r\n",
+    "AT+CIPSTART=\"TCP\",\""URL"\",1883\r\n",
     "AT+CIPSEND=",
     "AT+CIPSHUT\r\n"
 };
@@ -84,6 +84,7 @@ void gprs_init(){
 }
 
 void gprs_connect(){
+    uint8_t counter = 0;
     
     uart_buffer_clear();
     uart_send("AT+CGATT=0\r\n");
@@ -110,6 +111,12 @@ void gprs_connect(){
 #endif
     
     do{
+        if (counter++ >= 5){
+            uart_buffer_clear();
+            uart_send(AT_COMMANDS[CLOSE_TCP]);
+            waitFor(AT_ANS[CLOSE_TCP], "ERROR", 5000);
+            counter = 0;
+        }
         uart_buffer_clear();
         uart_send(AT_COMMANDS[CONN_TCP]);
     } while((init = waitFor(AT_ANS[CONN_TCP], "ERROR", 25000)) != 1);
