@@ -8,10 +8,11 @@
  * main.c
  */
  
+// #define TEMPO_SLEEP 20 // 10 seg
 // #define TEMPO_SLEEP 40 // 20 seg
-#define TEMPO_SLEEP 120 // 1 min
+// #define TEMPO_SLEEP 120 // 1 min
 // #define TEMPO_SLEEP 240 // 2 min
-// #define TEMPO_SLEEP 600 // 5 min
+#define TEMPO_SLEEP 600 // 5 min
 // #define TEMPO_SLEEP 28800 // 4 hrs
  
 volatile static unsigned int i;

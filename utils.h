@@ -5,7 +5,7 @@
 #include <msp430.h>
 #include "msp-cpu.h"
 
-#define DEBUG
+// #define DEBUG
 
 // P1
 #define RED_LED BIT0
@@ -20,7 +20,7 @@
 // P2
 #define BOARD_ON_OFF BIT0
 
-#define VOLTAGE_DIVIDER_FACTOR 2 // for the VCC
+#define VOLTAGE_DIVIDER_FACTOR 4 // for the VCC
 
 #define BUFFER_SIZE 256
 volatile char UART_BUFFER[BUFFER_SIZE];

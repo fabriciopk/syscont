@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "msp-cpu.h"
 
-// #define TELIT_SIM
+#define TELIT_SIM
 
 #ifdef TELIT_SIM
 #define APN "internetm2m.air.com"
@@ -16,7 +16,8 @@
 
 //#define TOKEN_API ""
 #define DEVICE_ID '2'
-#define URL "mqtt.dalmago.xyz"
+// #define URL "mqtt.dalmago.xyz"
+#define URL "35.185.210.142"
                                 
 #define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
 #define MQTT_PUBLISH_TOPIC "s/2"

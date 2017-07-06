@@ -50,9 +50,9 @@ void gprs_init(){
     
     // wait the module initialization proccess
 #ifdef TELIT_SIM
-    while (waitFor("CREG: 5\r\n", 0, 20000) != 1){
+    while (waitFor("CREG: 5\r\n", 0, 25000) != 1){
 #else
-    while (waitFor("CREG: 1\r\n", 0, 20000) != 1){
+    while (waitFor("CREG: 1\r\n", 0, 25000) != 1){
 #endif
         gprs_powerCycle();
         uart_buffer_clear();
@@ -84,25 +84,36 @@ void gprs_init(){
 }
 
 void gprs_connect(){
-    uint8_t counter = 0;
+    uint8_t counter;
     
-    uart_buffer_clear();
-    uart_send("AT+CGATT=0\r\n");
-    waitFor("OK\r\n", 0, 5000);
-    
-    do{
+    while(1){
         uart_buffer_clear();
-        uart_send(AT_COMMANDS[ATTACH]);
-    } while (waitFor(AT_ANS[ATTACH], "ERROR", 25000) != 1);
-    
-    uart_buffer_clear();
-    uart_send(AT_COMMANDS[SET_PDP_CONTEXT]);
-    waitFor(AT_ANS[SET_PDP_CONTEXT], 0, 3000);
-    
-    do{
+        uart_send("AT+CGATT=0\r\n");
+        waitFor("OK\r\n", 0, 25000);
+        
+        counter = 0;
+        do{
+            if (counter++ >= 3) break;
+            uart_buffer_clear();
+            uart_send(AT_COMMANDS[ATTACH]);
+        } while (waitFor(AT_ANS[ATTACH], "ERROR", 25000) != 1);
+        
+        if (counter >= 3) continue;
+        
         uart_buffer_clear();
-        uart_send(AT_COMMANDS[ACTIVATE_PDP_CONTEXT]);
-    } while(waitFor(AT_ANS[ACTIVATE_PDP_CONTEXT], "ERROR", 35000) != 1);
+        uart_send(AT_COMMANDS[SET_PDP_CONTEXT]);
+        waitFor(AT_ANS[SET_PDP_CONTEXT], 0, 3000);
+        
+        counter = 0;
+        do{
+            if (counter++ >= 3) break;
+            uart_buffer_clear();
+            uart_send(AT_COMMANDS[ACTIVATE_PDP_CONTEXT]);
+        } while(waitFor(AT_ANS[ACTIVATE_PDP_CONTEXT], "ERROR", 35000) != 1);
+        
+        if (counter >= 3) continue;
+        break;
+    }
     
 #ifdef DEBUG
     uart_buffer_clear();
@@ -110,6 +121,7 @@ void gprs_connect(){
     waitFor(AT_ANS[GET_IP], 0, 7000);
 #endif
     
+    counter = 0;
     do{
         if (counter++ >= 5){
             uart_buffer_clear();
@@ -153,7 +165,7 @@ void gprs_send_data(float distance, float battery){
     uart_send_buffer(payload, sizeof(payload));
     
     uart_buffer_clear();
-    waitFor("CIPRCV", 0, 6000);
+    waitFor("CIPRCV", 0, 10000);
     
     uart_buffer_clear();
     
