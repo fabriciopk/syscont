@@ -11,14 +11,17 @@
 #define RED_LED BIT0
 #define UART_RXD BIT1
 #define UART_TXD BIT2
-#define ECHO BIT3
+#define RST BIT3
 #define PWR BIT4
-#define RST BIT5
-#define VCC_2 BIT6
-#define TRIGGER BIT7
+// #define TEMP_SENS BIT5
+#define VCC_4 BIT6
+#define ECHO BIT7
 
 // P2
-#define BOARD_ON_OFF BIT0
+#define BOARD_ON_OFF BIT2
+#define TRIGGER2 BIT3
+#define ECHO2 BIT4
+#define TRIGGER BIT5
 
 #define VOLTAGE_DIVIDER_FACTOR 4 // for the VCC
 

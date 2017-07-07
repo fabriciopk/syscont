@@ -6,18 +6,15 @@ void msp_init(){
     BCSCTL1 = CALBC1_1MHZ; // Set DCO
     DCOCTL = CALDCO_1MHZ;
  
- #ifdef DEBUG   
-    P1DIR |= RED_LED + RST + PWR + TRIGGER; // outputs
-#else
-    P1DIR |= RST + PWR + TRIGGER; // outputs
-#endif
-    P1DIR &= ~(ECHO + VCC_2); // input
+    // Setting the unused pins as outputs reduce power consumption
+    P1DIR = ~(UART_RXD + VCC_4 + ECHO);
+    P2DIR = ~(ECHO2); 
+ 
     P1OUT = 0;
+    P2OUT = BOARD_ON_OFF; // board off
+    
     P1SEL |= UART_RXD + UART_TXD ; // P1.1 = RXD, P1.2=TXD
     P1SEL2 |= UART_RXD + UART_TXD ;
-    
-    P2DIR = 0xFF; // All P2.x outputs, reduce power consumption
-    P2OUT = BOARD_ON_OFF;
     
     UCA0CTL1 |= UCSSEL_2; // SMCLK
     
@@ -81,7 +78,7 @@ float read_battery(){
     
     ADC10CTL1 = INCH_6 + ADC10DIV_3 ;         // Channel 6, ADC10CLK/3
 	ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON;  // Vcc & Vss as reference, Sample and hold for 64 Clock cycles, ADC on
-	ADC10AE0 |= VCC_2;                         // ADC input enable P1.3
+	ADC10AE0 |= VCC_4;                         // ADC input enable
 	
 	ADC10CTL0 |= ENC + ADC10SC;			// Sampling and conversion start
 	

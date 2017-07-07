@@ -5,11 +5,11 @@ double read_sensor_cm(){
     uint16_t timer;
     double aux;
     
-    P1OUT |= TRIGGER;
+    P2OUT |= TRIGGER;
     // ~ 10us at 1MHz
     i = 0;
     i = 1;
-    P1OUT &= ~TRIGGER;
+    P2OUT &= ~TRIGGER;
     
     TA0CTL = TACLR;
     while(! (P1IN & ECHO)); // wait for echo to go UP
