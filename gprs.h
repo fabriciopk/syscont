@@ -14,7 +14,6 @@
 #define APN "zap.vivo.com.br"
 #endif
 
-//#define TOKEN_API ""
 #define DEVICE_ID '2'
 // #define URL "mqtt.dalmago.xyz"
 #define URL "35.185.210.142"
