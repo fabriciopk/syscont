@@ -14,19 +14,29 @@
 #define APN "zap.vivo.com.br"
 #endif
 
-#define DEVICE_ID '2'
+#define DEVICE_ID '3'
 // #define URL "mqtt.dalmago.xyz"
 #define URL "35.185.210.142"
                                 
 #define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
-#define MQTT_PUBLISH_TOPIC "s/2"
+
+#ifdef TWO_SENSORS
+#define MQTT_PUBLISH_TOPIC "c/3"
+#else
+#define MQTT_PUBLISH_TOPIC "s/3"
+#endif
 
 void gprs_init();
 void gprs_connect();
-void gprs_send_data(float, float);
 void get_coordinates();
 void gprs_reset();
 void gprs_powerCycle();
+
+#ifdef TWO_SENSORS
+    void gprs_send_data(float, float, float);
+#else
+    void gprs_send_data(float, float);
+#endif
 
 unsigned char init;
 unsigned char connected;

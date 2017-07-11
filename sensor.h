@@ -20,7 +20,9 @@ typedef struct{
 
 typedef enum{
     SENSOR1 = 0,
+#ifdef TWO_SENSORS
     SENSOR2
+#endif
 } sensor_t;
 
 double read_sensor_cm(sensor_t);

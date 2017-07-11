@@ -20,6 +20,10 @@ volatile static unsigned int i;
 volatile float distance;
 volatile float battery;
 
+#ifdef TWO_SENSORS
+volatile float distance2;
+#endif
+
  
 void configureIntTimer(void);
  
@@ -56,10 +60,17 @@ __interrupt void Timer_A (void)
         
         distance = sensor_get(SENSOR1);
         battery = read_battery();
+#ifdef TWO_SENSORS
+        distance2 = sensor_get(SENSOR2);
+#endif
         
         gprs_powerCycle();
         gprs_init();
+#ifdef TWO_SENSORS
+        gprs_send_data(distance, distance2, battery);
+#else
         gprs_send_data(distance, battery);
+#endif
         
         // gprs_reset();
         boardOff();

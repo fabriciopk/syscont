@@ -4,18 +4,22 @@ double read_sensor_cm(sensor_t s){
     volatile uint8_t i;
     uint16_t timer;
     double aux;
-    
     sensor_ports sensor;
+    
     sensor.pout = P2OUT;
+#ifdef TWO_SENSORS
     if (s == SENSOR1){
+#endif
         sensor.trigger = TRIGGER;
         sensor.pin = P1IN;
         sensor.echo = ECHO;
+#ifdef TWO_SENSORS
     } else{
         sensor.trigger = TRIGGER2;
         sensor.pin = P2IN;
         sensor.echo = ECHO2;
     }
+#endif
     
     sensor.pout |= sensor.trigger;
     // ~ 10us at 1MHz

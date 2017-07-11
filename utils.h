@@ -6,6 +6,7 @@
 #include "msp-cpu.h"
 
 // #define DEBUG
+// #define TWO_SENSORS
 
 // P1
 #define RED_LED BIT0
@@ -34,6 +35,11 @@ void uart_send_int(int);
 int buffer_find(const char *);
 int waitFor(const char*, const char*, unsigned short);
 void floatToBytes(float, unsigned char*, unsigned char*);
+
+#ifdef TWO_SENSORS
+void generatePayload2(unsigned char*, float, float, float);
+#else
 void generatePayload(unsigned char*, float, float);
+#endif
 
 #endif
