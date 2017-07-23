@@ -12,10 +12,8 @@
 #define MAX_VALUE 150
 
 typedef struct{
-    uint8_t pout;
-    uint16_t trigger;
-    uint8_t pin;
-    uint16_t echo;
+    uint8_t trigger;
+    uint8_t echo;
 } sensor_ports;
 
 typedef enum{

@@ -6,36 +6,41 @@ double read_sensor_cm(sensor_t s){
     double aux;
     sensor_ports sensor;
     
-    sensor.pout = P2OUT;
 #ifdef TWO_SENSORS
     if (s == SENSOR1){
 #endif
         sensor.trigger = TRIGGER;
-        sensor.pin = P1IN;
         sensor.echo = ECHO;
 #ifdef TWO_SENSORS
     } else{
         sensor.trigger = TRIGGER2;
-        sensor.pin = P2IN;
         sensor.echo = ECHO2;
     }
 #endif
-    
-    sensor.pout |= sensor.trigger;
+
+    P2OUT |= sensor.trigger;
     // ~ 10us at 1MHz
     i = 0;
     i = 1;
-    sensor.pout &= ~sensor.trigger;
+    P2OUT &= ~sensor.trigger;
     
     TA0CTL = TACLR;
-    while(! (sensor.pin & sensor.echo)); // wait for echo to go UP
+    if (s == SENSOR1){
+        while(! (P1IN & sensor.echo)); // wait for echo to go UP
+    } else{
+        while(! (P2IN & sensor.echo)); // wait for echo to go UP
+    }
     
     TA0CTL = TASSEL_2 + MC_2 + ID_0; // SMCLK/1, upmode
 #ifdef DEBUG
     ledOn(RED_LED);
 #endif
     
-    while (sensor.pin & sensor.echo);
+    if (s == SENSOR1){
+        while (P1IN & sensor.echo);
+    } else{
+        while (P2IN & sensor.echo);
+    }
     
     timer = TA0R;
     TA0CTL = MC_0;
