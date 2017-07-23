@@ -1,4 +1,5 @@
 #include <msp430.h>
+#include <stdint.h>
 #include "msp-cpu.h"
 #include "utils.h"
 #include "sensor.h"
@@ -7,23 +8,20 @@
 /*
  * main.c
  */
- 
+
+// #define TEMPO_SLEEP 10 // 5 seg
 // #define TEMPO_SLEEP 20 // 10 seg
 // #define TEMPO_SLEEP 40 // 20 seg
-// #define TEMPO_SLEEP 120 // 1 min
+#define TEMPO_SLEEP 120 // 1 min
 // #define TEMPO_SLEEP 240 // 2 min
-#define TEMPO_SLEEP 600 // 5 min
+// #define TEMPO_SLEEP 600 // 5 min
+// #define TEMPO_SLEEP 1200 // 10 min
 // #define TEMPO_SLEEP 28800 // 4 hrs
  
-volatile static unsigned int i;
-//volatile static unsigned int tempo; // * 0.5s
-volatile float distance;
-volatile float battery;
-
-#ifdef TWO_SENSORS
+volatile static uint32_t i;
+volatile float distance1;
 volatile float distance2;
-#endif
-
+volatile float battery;
  
 void configureIntTimer(void);
  
@@ -34,6 +32,12 @@ int main(void)
     msp_init();
     read_battery();
     // __bic_SR_register(GIE); // disable global interrupt flag
+    
+    delay(1000);
+    boardOn();
+    
+    delay(2000);
+    boardOff();
     
     configureIntTimer();
     LPM0; // LOW POWER MODE 0
@@ -52,25 +56,26 @@ void configureIntTimer(void){
 #pragma vector=TIMER0_A0_VECTOR 
 __interrupt void Timer_A (void) 
 {   
+    // static uint8_t temporario = 1;
+    
     if (i++ >= TEMPO_SLEEP){
         TACCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
         __bis_SR_register(GIE); // enable global interrupt flag
         
         boardOn();
         
-        distance = sensor_get(SENSOR1);
-        battery = read_battery();
-#ifdef TWO_SENSORS
+        distance1 = sensor_get(SENSOR1);
         distance2 = sensor_get(SENSOR2);
-#endif
+        // distance = temporario++;
+        battery = read_battery();
+        battery += read_battery();
+        battery += read_battery();
+        battery += read_battery();
+        battery = battery/4;
         
         gprs_powerCycle();
         gprs_init();
-#ifdef TWO_SENSORS
-        gprs_send_data(distance, distance2, battery);
-#else
-        gprs_send_data(distance, battery);
-#endif
+        gprs_send_data(distance1, distance2, battery);
         
         // gprs_reset();
         boardOff();

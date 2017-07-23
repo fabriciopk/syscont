@@ -138,20 +138,11 @@ void gprs_connect(){
 }
 
 
-#ifdef TWO_SENSORS
-void gprs_send_data(float distance, float distance2, float battery){
-#else
-void gprs_send_data(float distance, float battery){
-#endif
+void gprs_send_data(float distance1, float distance2, float battery){
     gprs_connect();
     
-#ifdef TWO_SENSORS
     unsigned char payload[7];
-    generatePayload2(payload, distance, distance2, battery);
-#else
-    unsigned char payload[5];
-    generatePayload(payload, distance, battery);
-#endif
+    generatePayload(payload, distance1, distance2, battery);
     
     // MQTT
     unsigned char publish[4];

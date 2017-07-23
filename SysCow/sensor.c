@@ -6,17 +6,13 @@ double read_sensor_cm(sensor_t s){
     double aux;
     sensor_ports sensor;
     
-#ifdef TWO_SENSORS
     if (s == SENSOR1){
-#endif
         sensor.trigger = TRIGGER;
         sensor.echo = ECHO;
-#ifdef TWO_SENSORS
     } else{
         sensor.trigger = TRIGGER2;
         sensor.echo = ECHO2;
     }
-#endif
 
     P2OUT |= sensor.trigger;
     // ~ 10us at 1MHz

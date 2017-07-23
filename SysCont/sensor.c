@@ -1,46 +1,25 @@
 #include "sensor.h"
 
-double read_sensor_cm(sensor_t s){
+double read_sensor_cm(){
     volatile uint8_t i;
     uint16_t timer;
     double aux;
-    sensor_ports sensor;
-    
-#ifdef TWO_SENSORS
-    if (s == SENSOR1){
-#endif
-        sensor.trigger = TRIGGER;
-        sensor.echo = ECHO;
-#ifdef TWO_SENSORS
-    } else{
-        sensor.trigger = TRIGGER2;
-        sensor.echo = ECHO2;
-    }
-#endif
 
-    P2OUT |= sensor.trigger;
+    P2OUT |= TRIGGER;
     // ~ 10us at 1MHz
     i = 0;
     i = 1;
-    P2OUT &= ~sensor.trigger;
+    P2OUT &= ~TRIGGER;
     
     TA0CTL = TACLR;
-    if (s == SENSOR1){
-        while(! (P1IN & sensor.echo)); // wait for echo to go UP
-    } else{
-        while(! (P2IN & sensor.echo)); // wait for echo to go UP
-    }
-    
+    while(! (P1IN & ECHO)); // wait for echo to go UP
+
     TA0CTL = TASSEL_2 + MC_2 + ID_0; // SMCLK/1, upmode
 #ifdef DEBUG
     ledOn(RED_LED);
 #endif
     
-    if (s == SENSOR1){
-        while (P1IN & sensor.echo);
-    } else{
-        while (P2IN & sensor.echo);
-    }
+    while (P1IN & ECHO);
     
     timer = TA0R;
     TA0CTL = MC_0;
@@ -54,7 +33,7 @@ double read_sensor_cm(sensor_t s){
     return aux;
 }
 
-float sensor_get(sensor_t s){
+float sensor_get(){
     double measures[5];
     double maior, menor;
     double soma;
@@ -66,7 +45,7 @@ float sensor_get(sensor_t s){
     soma = 0;
     
     for (i=0; i<5; i++){
-        measures[i] = read_sensor_cm(s);
+        measures[i] = read_sensor_cm();
         
         if (measures[i] < MIN_VALUE || measures[i] > MAX_VALUE){
             i--;

@@ -20,23 +20,14 @@
                                 
 #define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
 
-#ifdef TWO_SENSORS
-#define MQTT_PUBLISH_TOPIC "c/3"
-#else
 #define MQTT_PUBLISH_TOPIC "s/3"
-#endif
 
 void gprs_init();
 void gprs_connect();
 void get_coordinates();
 void gprs_reset();
 void gprs_powerCycle();
-
-#ifdef TWO_SENSORS
-    void gprs_send_data(float, float, float);
-#else
-    void gprs_send_data(float, float);
-#endif
+void gprs_send_data(float, float);
 
 unsigned char init;
 unsigned char connected;

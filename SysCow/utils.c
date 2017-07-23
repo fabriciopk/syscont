@@ -63,11 +63,10 @@ void floatToBytes(float value, unsigned char *integ, unsigned char* dec){
     return;
 }
 
-#ifdef TWO_SENSORS
-void generatePayload2(unsigned char *dst, float distance, float distance2, float battery){
+void generatePayload(unsigned char *dst, float distance1, float distance2, float battery){
     unsigned char d1_i, d1_r, d2_i, d2_r, b_i, b_r, i;
     
-    floatToBytes(distance, &d1_i, &d1_r);
+    floatToBytes(distance1, &d1_i, &d1_r);
     floatToBytes(distance2, &d2_i, &d2_r);
     floatToBytes(battery, &b_i, &b_r);
     
@@ -93,30 +92,3 @@ void generatePayload2(unsigned char *dst, float distance, float distance2, float
     
     return;
 }
-
-#else
-void generatePayload(unsigned char *dst, float distance, float battery){
-    unsigned char d_i, d_r, b_i, b_r, i;
-    
-    floatToBytes(distance, &d_i, &d_r);
-    floatToBytes(battery, &b_i, &b_r);
-    
-    dst[1] = d_r;
-    dst[2] = b_r;
-    dst[3] = b_i;
-    dst[4] = d_i;
-    
-    unsigned char hash = 0;
-    
-    for (i=4; i>0; i--){
-        hash ^= dst[i]; 
-    }
-    
-    hash = hash >> 1;
-    hash += 69;
-    
-    dst[0] = hash;
-    
-    return;
-}
-#endif
