@@ -8,10 +8,13 @@ void msp_init(){
  
     // Setting the unused pins as outputs reduce power consumption
     P1DIR = ~(UART_RXD + VCC_4 + ECHO);
-    P2DIR = ~(ECHO2); 
- 
-    P1OUT = 0;
-    P2OUT = BOARD_ON_OFF; // board off
+    P2DIR = ~(ECHO2);
+    
+    P1OUT = 0; //ECHO; // pull-up
+    P2OUT = BOARD_ON_OFF; // + ECHO2; // board off
+    
+    // P1REN = ECHO;
+    // P2REN = ECHO2;
     
     P1SEL |= UART_RXD + UART_TXD ; // P1.1 = RXD, P1.2=TXD
     P1SEL2 |= UART_RXD + UART_TXD ;

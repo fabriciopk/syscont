@@ -38,7 +38,7 @@ const char MQTT_CONNECT[] = {
                               0, 6, 'M', 'Q', 'I', 's', 'd', 'p', 3, // Protocol
                               0xC2,   // Username Flag + Password Flag + Clean Session
                               0, 20,  // Keep Alive
-                              0, 2, 's', DEVICE_ID, // Client Id
+                              0, 2, 'c', DEVICE_ID, // Client Id
                               0, 7, 'd', 'a', 'l', 'm', 'a', 'g', 'o', // Username
                               0, 8, 't', 'e', 's', 't', 'e', '1', '2', '3' // Password
                             };
@@ -108,8 +108,8 @@ void gprs_connect(){
         do{
             if (counter++ >= 3) break;
             uart_buffer_clear();
-            uart_send(AT_COMMANDS[ACTIVATE_PDP_CONTEXT]);
-        } while(waitFor(AT_ANS[ACTIVATE_PDP_CONTEXT], "ERROR", 35000) != 1);
+            uart_send(AT_COMMANDS[8]);
+        } while(waitFor(AT_ANS[8], "ERROR", 35000) != 1);
         
         if (counter >= 3) continue;
         break;
@@ -117,8 +117,8 @@ void gprs_connect(){
     
 #ifdef DEBUG
     uart_buffer_clear();
-    uart_send(AT_COMMANDS[GET_IP]);
-    waitFor(AT_ANS[GET_IP], 0, 7000);
+    uart_send(AT_COMMANDS[9]);
+    waitFor(AT_ANS[9], 0, 7000);
 #endif
     
     counter = 0;

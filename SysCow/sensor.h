@@ -8,8 +8,8 @@
 
 //volatile unsigned char TIMER_FLAG;
 
-#define MIN_VALUE 20
-#define MAX_VALUE 150
+#define MIN_VALUE 10
+#define MAX_VALUE 254
 
 typedef struct{
     uint8_t trigger;
