@@ -3,6 +3,7 @@
 #define __sysclean_utils__
 
 #include <msp430.h>
+#include <stdint.h>
 #include "msp-cpu.h"
 
 // #define DEBUG
@@ -33,7 +34,7 @@ volatile unsigned int UART_INDEX;
 void uart_send_int(int);
 int buffer_find(const char *);
 int waitFor(const char*, const char*, unsigned short);
-void floatToBytes(float, unsigned char*, unsigned char*);
-void generatePayload(unsigned char*, float, float, float);
+void floatToBytes(float, uint16_t*, uint8_t*);
+void generatePayload(uint8_t*, float, float, float);
 
 #endif

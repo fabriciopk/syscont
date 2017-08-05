@@ -108,8 +108,8 @@ void gprs_connect(){
         do{
             if (counter++ >= 3) break;
             uart_buffer_clear();
-            uart_send(AT_COMMANDS[8]);
-        } while(waitFor(AT_ANS[8], "ERROR", 35000) != 1);
+            uart_send("AT+CGACT=1,1\r\n");
+        } while(waitFor("OK\r\n", "ERROR", 35000) != 1);
         
         if (counter >= 3) continue;
         break;
@@ -117,21 +117,21 @@ void gprs_connect(){
     
 #ifdef DEBUG
     uart_buffer_clear();
-    uart_send(AT_COMMANDS[9]);
-    waitFor(AT_ANS[9], 0, 7000);
+    uart_send("AT+CIFSR\r\n");
+    waitFor("OK\r\n", 0, 7000);
 #endif
     
     counter = 0;
     do{
         if (counter++ >= 5){
             uart_buffer_clear();
-            uart_send(AT_COMMANDS[CLOSE_TCP]);
-            waitFor(AT_ANS[CLOSE_TCP], "ERROR", 5000);
+            uart_send("AT+CIPSHUT\r\n");
+            waitFor("OK\r\n", "ERROR", 5000);
             counter = 0;
         }
         uart_buffer_clear();
-        uart_send(AT_COMMANDS[CONN_TCP]);
-    } while((init = waitFor(AT_ANS[CONN_TCP], "ERROR", 25000)) != 1);
+        uart_send("AT+CIPSTART=\"TCP\",\""URL"\",1883\r\n");
+    } while((init = waitFor("OK\r\n", "ERROR", 25000)) != 1);
     uart_buffer_clear();
     
     return;
@@ -141,7 +141,7 @@ void gprs_connect(){
 void gprs_send_data(float distance1, float distance2, float battery){
     gprs_connect();
     
-    unsigned char payload[7];
+    unsigned char payload[9];
     generatePayload(payload, distance1, distance2, battery);
     
     // MQTT
@@ -152,7 +152,7 @@ void gprs_send_data(float distance1, float distance2, float battery){
     publish[3] = sizeof(MQTT_PUBLISH_TOPIC) -1;
     
     uart_buffer_clear();
-    uart_send(AT_COMMANDS[11]);
+    uart_send("AT+CIPSEND=");
     uart_send_int(sizeof(MQTT_CONNECT) + sizeof(publish) + 
                             sizeof(MQTT_PUBLISH_TOPIC) - 1 + sizeof(payload));
     uart_send("\r\n");

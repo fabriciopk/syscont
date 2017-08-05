@@ -17,7 +17,7 @@
 // #define TEMPO_SLEEP 600 // 5 min
 // #define TEMPO_SLEEP 1200 // 10 min
 // #define TEMPO_SLEEP 28800 // 4 hrs
- 
+
 volatile static uint32_t i;
 volatile float distance1;
 volatile float distance2;
@@ -39,6 +39,7 @@ int main(void)
     boardOff();
     
     configureIntTimer();
+    
     LPM0; // LOW POWER MODE 0
     //LPM0_EXIT;
     

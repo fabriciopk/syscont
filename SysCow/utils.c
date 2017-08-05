@@ -50,38 +50,38 @@ int waitFor(const char *ans, const char *error, unsigned short time){
     return 1;
 }
 
-void floatToBytes(float value, unsigned char *integ, unsigned char* dec){
+void floatToBytes(float value, uint16_t *integ, uint8_t* dec){
     int integer;
     int decimal;
     
     integer = (int)value;
     decimal = (int)((value - integer) * 100);
     
-    *integ = (unsigned char)integer;
-    *dec = (unsigned char)decimal;
+    *integ = (uint16_t)integer;
+    *dec = (uint8_t)decimal;
     
     return;
 }
 
-void generatePayload(unsigned char *dst, float distance1, float distance2, float battery){
-    unsigned char d1_i, d1_r, d2_i, d2_r, b_i, b_r, i;
+void generatePayload(uint8_t *dst, float distance1, float distance2, float battery){
+    uint8_t d1_r, d2_r, b_i, b_r, i;
+    uint16_t d1_i, d2_i;
     
     floatToBytes(distance1, &d1_i, &d1_r);
     floatToBytes(distance2, &d2_i, &d2_r);
     floatToBytes(battery, &b_i, &b_r);
     
-    
-    
-    dst[1] = d1_r;
-    dst[2] = d2_r;
+    dst[1] = d1_i;
+    dst[2] = d2_i;
     dst[3] = b_r;
     dst[4] = b_i;
-    dst[5] = d2_i;
-    dst[6] = d1_i;
+    dst[5] = (d2_i >> 8);
+    dst[6] = d2_r;
+    dst[7] = (d1_i >> 8);
+    dst[8] = d1_r;
     
-    unsigned char hash = 0;
-    
-    for (i=6; i>0; i--){
+    uint8_t hash = 0;
+    for (i=8; i>0; i--){
         hash ^= dst[i]; 
     }
     

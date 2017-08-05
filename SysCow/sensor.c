@@ -70,13 +70,13 @@ float sensor_get(sensor_t s){
             soma += measures[i];
         }
         
-        if (count >= 10) break; // i >= 4
+        if (count >= 15) break; // i >= 4
         count++;
         
         delay(1000);
     }
     
-    if (count >= 10){
+    if (count >= 15){
         return 0;
     }
     
