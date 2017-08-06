@@ -9,7 +9,6 @@
 // #define DEBUG
 
 // P1
-#define RED_LED BIT0
 #define UART_RXD BIT1
 #define UART_TXD BIT2
 #define RST BIT3

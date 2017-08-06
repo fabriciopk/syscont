@@ -1,5 +1,6 @@
 #include "gprs.h"
 
+/*
 char *AT_COMMANDS[] = {
     "AT\r\n",
     "ATE0\r\n",
@@ -32,6 +33,23 @@ char *AT_ANS[] = {
     "OK\r\n"
 };
 
+enum at_command {
+    AT = 0,
+    DIS_ECHO = 1,
+    SET_BAUD_RATE = 2,
+    NETWORK_REGIST = 3,
+    EN_SHOW_OPERATOR = 4,
+    CHECK_OPERATOR = 5,
+    ATTACH = 6,
+    SET_PDP_CONTEXT = 7,
+    ACTIVATE_PDP_CONTEXT = 8,
+    GET_IP = 9,
+    CONN_TCP = 10,
+    SEND_DATA = 11,
+    CLOSE_TCP = 12
+};
+*/
+
 const char MQTT_CONNECT[] = {
                               0x10,  // CONNECT
                               35,     // Remaining Length
@@ -49,36 +67,34 @@ void gprs_init(){
     data_sent = 0;
     
     // wait the module initialization proccess
-#ifdef TELIT_SIM
-    while (waitFor("CREG: 5\r\n", 0, 25000) != 1){
-#else
-    while (waitFor("CREG: 1\r\n", 0, 25000) != 1){
-#endif
+    // CREG: 1 - local network
+    // CREG: 5 - roaming
+    while (! waitFor("CREG: 1\r\n", "CREG: 5\r\n", 25000)){
         gprs_powerCycle();
         uart_buffer_clear();
     }
     uart_buffer_clear();
     
-    uart_send(AT_COMMANDS[DIS_ECHO]);
-    waitFor(AT_ANS[DIS_ECHO], 0, 2000);
+    uart_send("ATE0\r\n"); // DISABLE ECHO
+    waitFor("OK\r\n", 0, 2000);
     uart_buffer_clear();
     
-    uart_send(AT_COMMANDS[SET_BAUD_RATE]);
-    waitFor(AT_ANS[SET_BAUD_RATE], 0, 2000);
+    uart_send("AT+IPR=115200\r\n"); // SET BAUD RATE
+    waitFor("OK\r\n", 0, 2000);
     
     do{
         uart_buffer_clear();
-        uart_send(AT_COMMANDS[NETWORK_REGIST]);
-    } while(waitFor(AT_ANS[NETWORK_REGIST], 0, 5000) != 1);
+        uart_send("AT+CREG?\r\n"); // NETWORK REGISTER
+    } while(waitFor("CREG: 1", 0, 5000) != 1);
     uart_buffer_clear();
     
 #ifdef DEBUG
-    uart_send(AT_COMMANDS[EN_SHOW_OPERATOR]);
-    waitFor(AT_ANS[EN_SHOW_OPERATOR], 0, 2000);
+    uart_send("AT+COPS=3,0\r\n"); // ENABLE SHOW OPERATOR
+    waitFor("OK\r\n", 0, 2000);
     uart_buffer_clear();
     
-    uart_send(AT_COMMANDS[CHECK_OPERATOR]);
-    waitFor(AT_ANS[CHECK_OPERATOR], 0, 2000);
+    uart_send("AT+COPS?\r\n"); // CHECK OPERATOR
+    waitFor("COPS: 1,", 0, 2000);
     uart_buffer_clear();
 #endif
 }
@@ -88,27 +104,27 @@ void gprs_connect(){
     
     while(1){
         uart_buffer_clear();
-        uart_send("AT+CGATT=0\r\n");
+        uart_send("AT+CGATT=0\r\n"); // DETACH
         waitFor("OK\r\n", 0, 25000);
         
         counter = 0;
         do{
             if (counter++ >= 3) break;
             uart_buffer_clear();
-            uart_send(AT_COMMANDS[ATTACH]);
-        } while (waitFor(AT_ANS[ATTACH], "ERROR", 25000) != 1);
+            uart_send("AT+CGATT=1\r\n"); // ATTACH
+        } while (waitFor("OK\r\n", "ERROR", 25000) != 1);
         
         if (counter >= 3) continue;
         
         uart_buffer_clear();
-        uart_send(AT_COMMANDS[SET_PDP_CONTEXT]);
-        waitFor(AT_ANS[SET_PDP_CONTEXT], 0, 3000);
+        uart_send("AT+CGDCONT=1,\"IP\",\""APN"\"\r\n"); // SET PDP CONTEXT
+        waitFor("OK\r\n", 0, 3000);
         
         counter = 0;
         do{
             if (counter++ >= 3) break;
             uart_buffer_clear();
-            uart_send("AT+CGACT=1,1\r\n");
+            uart_send("AT+CGACT=1,1\r\n"); // ACTIVATE PDP
         } while(waitFor("OK\r\n", "ERROR", 35000) != 1);
         
         if (counter >= 3) continue;
@@ -117,7 +133,7 @@ void gprs_connect(){
     
 #ifdef DEBUG
     uart_buffer_clear();
-    uart_send("AT+CIFSR\r\n");
+    uart_send("AT+CIFSR\r\n"); // READ IP
     waitFor("OK\r\n", 0, 7000);
 #endif
     
@@ -125,12 +141,12 @@ void gprs_connect(){
     do{
         if (counter++ >= 5){
             uart_buffer_clear();
-            uart_send("AT+CIPSHUT\r\n");
+            uart_send("AT+CIPSHUT\r\n"); // CLOSE TCP
             waitFor("OK\r\n", "ERROR", 5000);
             counter = 0;
         }
         uart_buffer_clear();
-        uart_send("AT+CIPSTART=\"TCP\",\""URL"\",1883\r\n");
+        uart_send("AT+CIPSTART=\"TCP\",\""URL"\",1883\r\n"); // CON TCP
     } while((init = waitFor("OK\r\n", "ERROR", 25000)) != 1);
     uart_buffer_clear();
     

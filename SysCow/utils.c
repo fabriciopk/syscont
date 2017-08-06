@@ -28,25 +28,16 @@ int waitFor(const char *ans, const char *error, unsigned short time){
         delay(300);
         
         if (counter++ > (time / 300)){
-#ifdef DEBUG
-            ledOn(RED_LED);
-#endif
             return 0;
         }
         
         if (error != 0){
             if (buffer_find(error)){
-#ifdef DEBUG
-                ledOn(RED_LED);
-#endif
                 return -1;
             }
         }
     } while(! buffer_find(ans));
     
-#ifdef DEBUG
-    ledOff(RED_LED);
-#endif
     return 1;
 }
 

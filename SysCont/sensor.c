@@ -15,17 +15,11 @@ double read_sensor_cm(){
     while(! (P1IN & ECHO)); // wait for echo to go UP
 
     TA0CTL = TASSEL_2 + MC_2 + ID_0; // SMCLK/1, upmode
-#ifdef DEBUG
-    ledOn(RED_LED);
-#endif
     
     while (P1IN & ECHO);
     
     timer = TA0R;
     TA0CTL = MC_0;
-#ifdef DEBUG
-    ledOff(RED_LED);
-#endif
     TA0CTL = TACLR;
     
     aux = (double)timer * 0.01715;

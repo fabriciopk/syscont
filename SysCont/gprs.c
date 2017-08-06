@@ -49,11 +49,9 @@ void gprs_init(){
     data_sent = 0;
     
     // wait the module initialization proccess
-#ifdef TELIT_SIM
-    while (waitFor("CREG: 5\r\n", 0, 25000) != 1){
-#else
-    while (waitFor("CREG: 1\r\n", 0, 25000) != 1){
-#endif
+    // CREG: 1 - local network
+    // CREG: 5 - roaming
+    while (! waitFor("CREG: 1\r\n", "CREG: 5\r\n", 25000)){
         gprs_powerCycle();
         uart_buffer_clear();
     }

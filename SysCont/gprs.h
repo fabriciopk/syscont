@@ -6,13 +6,9 @@
 #include "utils.h"
 #include "msp-cpu.h"
 
-#define TELIT_SIM
-
-#ifdef TELIT_SIM
+// #define APN "virtueyes.vivo.com.br"
 #define APN "internetm2m.air.com"
-#else
-#define APN "zap.vivo.com.br"
-#endif
+// #define APN "zap.vivo.com.br"
 
 #define DEVICE_ID '3'
 #define URL "mqtt.solveiot.com.br"
