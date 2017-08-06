@@ -19,11 +19,11 @@
 #define MQTT_PUBLISH_TOPIC "c/3"
 
 void gprs_init();
-void gprs_connect();
+uint8_t gprs_connect();
 void get_coordinates();
 void gprs_reset();
 void gprs_powerCycle();
-void gprs_send_data(float, float, float);
+uint8_t gprs_send_data(float, float, float);
 
 unsigned char init;
 unsigned char connected;
