@@ -21,7 +21,7 @@ void gprs_init(){
     // wait the module initialization proccess
     // CREG: 1 - local network
     // CREG: 5 - roaming
-    while (! waitFor("CREG: 1\r\n", "CREG: 5\r\n", 25000)){
+    while (! waitFor("CREG: 1\r\n", "CREG: 5\r\n", 15000)){
         gprs_powerCycle();
         uart_buffer_clear();
     }
@@ -96,13 +96,13 @@ uint8_t gprs_connect(){
     counter1 = 0;
     counter2 = 0;
     do{
-        if (counter1++ >= 3){
+        if (++counter1 >= 3){
+            if (++counter2 >= 3) return 0;
+
             uart_buffer_clear();
             uart_send("AT+CIPSHUT\r\n"); // CLOSE TCP
             waitFor("OK\r\n", "ERROR", 5000);
             counter1 = 0;
-
-            if (counter2++ >= 3) return 0;
         }
         uart_buffer_clear();
         uart_send("AT+CIPSTART=\"TCP\",\""URL"\",1883\r\n"); // CON TCP

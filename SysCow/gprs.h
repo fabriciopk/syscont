@@ -11,8 +11,8 @@
 // #define APN "zap.vivo.com.br"
 
 #define DEVICE_ID '3'
-#define URL "mqtt.solveiot.com.br"
-// #define URL "35.185.210.142"
+// #define URL "mqtt.solveiot.com.br"
+#define URL "35.185.210.142"
 
 #define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
 

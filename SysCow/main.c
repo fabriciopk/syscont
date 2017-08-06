@@ -11,8 +11,8 @@
 
 // #define TEMPO_SLEEP 10 // 5 seg
 // #define TEMPO_SLEEP 20 // 10 seg
-#define TEMPO_SLEEP 40 // 20 seg
-// #define TEMPO_SLEEP 120 // 1 min
+// #define TEMPO_SLEEP 40 // 20 seg
+#define TEMPO_SLEEP 120 // 1 min
 // #define TEMPO_SLEEP 240 // 2 min
 // #define TEMPO_SLEEP 600 // 5 min
 // #define TEMPO_SLEEP 1200 // 10 min
@@ -22,12 +22,12 @@ volatile static uint32_t i;
 volatile float distance1;
 volatile float distance2;
 volatile float battery;
+volatile uint8_t counter;
 
 void configureIntTimer(void);
 
 int main(void)
 {
-    uint8_t counter = 0;
     WDTCTL = WDTPW + WDTHOLD; // Stop WDT
     i = 0;
     msp_init();
@@ -44,12 +44,12 @@ int main(void)
     battery += read_battery();
     battery = battery/4;
 
+    counter = 0;
     do {
-        if (counter++ > 3) break;
+        if (counter++ >= 3) break;
         gprs_powerCycle();
         gprs_init();
-    }
-    while (!gprs_send_data(distance1, distance2, battery));
+    } while (!gprs_send_data(distance1, distance2, battery));
 
     boardOff();
 
@@ -77,6 +77,7 @@ __interrupt void Timer_A (void)
         __bis_SR_register(GIE); // enable global interrupt flag
 
         boardOn();
+        delay(2000);
 
         distance1 = sensor_get(SENSOR1);
         distance2 = sensor_get(SENSOR2);
@@ -86,9 +87,12 @@ __interrupt void Timer_A (void)
         battery += read_battery();
         battery = battery/4;
 
-        gprs_powerCycle();
-        gprs_init();
-        gprs_send_data(distance1, distance2, battery);
+        counter = 0;
+        do {
+            if (counter++ >= 3) break;
+            gprs_powerCycle();
+            gprs_init();
+        } while (!gprs_send_data(distance1, distance2, battery));
 
         boardOff();
 
