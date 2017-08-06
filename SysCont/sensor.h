@@ -9,7 +9,7 @@
 //volatile unsigned char TIMER_FLAG;
 
 #define MIN_VALUE 20
-#define MAX_VALUE 150
+#define MAX_VALUE 250
 
 double read_sensor_cm();
 float sensor_get();
