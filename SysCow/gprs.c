@@ -11,17 +11,19 @@ const char MQTT_CONNECT[] = {
                               0, 8, 't', 'e', 's', 't', 'e', '1', '2', '3' // Password
                             };
 
-void gprs_init(){
-    init = 0;
-    connected = 0;
-    data_sent = 0;
+uint8_t gprs_init(){
+    // init = 0;
+    // connected = 0;
+    // data_sent = 0;
+    uint8_t counter = 0;
 
     uart_buffer_clear();
 
     // wait the module initialization proccess
     // CREG: 1 - local network
     // CREG: 5 - roaming
-    while (! waitFor("CREG: 1\r\n", "CREG: 5\r\n", 15000)){
+    while (! waitFor("CREG: 1\r\n", "CREG: 5\r\n", 25000)){
+        if (++counter >= 5) return 0;
         gprs_powerCycle();
         uart_buffer_clear();
     }
@@ -34,7 +36,9 @@ void gprs_init(){
     uart_send("AT+IPR=115200\r\n"); // SET BAUD RATE
     waitFor("OK\r\n", 0, 2000);
 
+    counter = 0;
     do{
+        if (++counter >= 3) return 0;
         uart_buffer_clear();
         uart_send("AT+CREG?\r\n"); // NETWORK REGISTER
     } while(waitFor("CREG: 1", 0, 5000) != 1);
@@ -49,6 +53,8 @@ void gprs_init(){
     waitFor("COPS: 1,", 0, 2000);
     uart_buffer_clear();
 #endif
+
+    return 1;
 }
 
 uint8_t gprs_connect(){
@@ -106,7 +112,8 @@ uint8_t gprs_connect(){
         }
         uart_buffer_clear();
         uart_send("AT+CIPSTART=\"TCP\",\""URL"\",1883\r\n"); // CON TCP
-    } while((init = waitFor("OK\r\n", "ERROR", 15000)) != 1);
+    // } while((init = waitFor("OK\r\n", "ERROR", 15000)) != 1);
+    } while(waitFor("OK\r\n", "ERROR", 15000) != 1);
     uart_buffer_clear();
 
     return 1;

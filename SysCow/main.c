@@ -12,11 +12,17 @@
 // #define TEMPO_SLEEP 10 // 5 seg
 // #define TEMPO_SLEEP 20 // 10 seg
 // #define TEMPO_SLEEP 40 // 20 seg
-#define TEMPO_SLEEP 120 // 1 min
+// #define TEMPO_SLEEP 120 // 1 min
 // #define TEMPO_SLEEP 240 // 2 min
 // #define TEMPO_SLEEP 600 // 5 min
 // #define TEMPO_SLEEP 1200 // 10 min
-// #define TEMPO_SLEEP 28800 // 4 hrs
+// #define TEMPO_SLEEP 3600 // 30 min
+// #define TEMPO_SLEEP 7200 // 1 hr
+// #define TEMPO_SLEEP 14400 // 2 hrs
+#define TEMPO_SLEEP 28800 // 4 hrs
+// #define TEMPO_SLEEP 43200 // 6 hrs
+// #define TEMPO_SLEEP 57600 // 8 hrs
+// #define TEMPO_SLEEP 86400 // 12 hrs
 
 volatile static uint32_t i;
 volatile float distance1;
@@ -46,10 +52,9 @@ int main(void)
 
     counter = 0;
     do {
-        if (counter++ >= 3) break;
+        if (++counter >= 3) break;
         gprs_powerCycle();
-        gprs_init();
-    } while (!gprs_send_data(distance1, distance2, battery));
+    } while (! (gprs_init() && gprs_send_data(distance1, distance2, battery)));
 
     boardOff();
 
@@ -89,10 +94,9 @@ __interrupt void Timer_A (void)
 
         counter = 0;
         do {
-            if (counter++ >= 3) break;
+            if (++counter >= 3) break;
             gprs_powerCycle();
-            gprs_init();
-        } while (!gprs_send_data(distance1, distance2, battery));
+        } while (! (gprs_init() && gprs_send_data(distance1, distance2, battery)));
 
         boardOff();
 
