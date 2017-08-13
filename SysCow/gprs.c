@@ -134,7 +134,7 @@ uint8_t gprs_send_data(float distance1, float distance2, float battery){
     publish[3] = sizeof(MQTT_PUBLISH_TOPIC) -1;
 
     uart_buffer_clear();
-    uart_send("AT+CIPSEND=");
+    uart_send("AT+CIPSEND="); // SEND DATA
     uart_send_int(sizeof(MQTT_CONNECT) + sizeof(publish) +
                             sizeof(MQTT_PUBLISH_TOPIC) - 1 + sizeof(payload));
     uart_send("\r\n");

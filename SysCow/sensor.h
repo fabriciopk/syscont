@@ -8,7 +8,7 @@
 
 //volatile unsigned char TIMER_FLAG;
 
-#define MIN_VALUE 20
+#define MIN_VALUE 15
 #define MAX_VALUE 575
 
 typedef struct{

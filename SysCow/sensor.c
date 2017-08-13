@@ -32,7 +32,7 @@ double read_sensor_cm(sensor_t s){
         }
     } else{
         while(! (P2IN & sensor.echo)){ // wait for echo to go UP
-        if (TA0R > 12500){ // no echo received in 100 ms
+            if (TA0R > 12500){ // no echo received in 100 ms
                 TA0CTL = TACLR;
                 return 0;
             }
