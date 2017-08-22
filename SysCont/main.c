@@ -9,7 +9,8 @@
  * main.c
  */
 
-#define TEMPO_SLEEP 10 // 5 seg
+#define TEMPO_SLEEP 2 // 1 seg
+// #define TEMPO_SLEEP 10 // 5 seg
 // #define TEMPO_SLEEP 20 // 10 seg
 // #define TEMPO_SLEEP 40 // 20 seg
 // #define TEMPO_SLEEP 120 // 1 min
@@ -78,6 +79,7 @@ __interrupt void Timer_A (void)
         __bis_SR_register(GIE); // enable global interrupt flag
 
         boardOn();
+        delay(2000);
 
         distance = sensor_get();
         battery = read_battery();
