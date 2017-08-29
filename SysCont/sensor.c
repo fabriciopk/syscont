@@ -25,7 +25,7 @@ double read_sensor_cm(){
     TA0CTL = TASSEL_2 + MC_2 + ID_0; // SMCLK/1, upmode
 
     while (P1IN & ECHO){
-        if (TA0R > 50000){ // echo up more than 50ms
+        if (TA0R > 61000){ // echo up more than 61ms
             TA0CTL = TACLR;
             return 0;
         }
