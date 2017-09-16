@@ -11,13 +11,13 @@
 // #define APN "internetm2m.air.com"
 // #define APN "zap.vivo.com.br"
 
-#define DEVICE_ID '3'
+#define DEVICE_ID '7'
 // #define URL "mqtt.solveiot.com.br"
-#define URL "35.185.210.142"
+#define URL "54.233.104.252"
 
 #define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
 
-#define MQTT_PUBLISH_TOPIC "s/3"
+#define MQTT_PUBLISH_TOPIC "s/7"
 
 uint8_t gprs_init();
 uint8_t gprs_connect();
