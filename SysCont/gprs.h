@@ -19,9 +19,8 @@
 #define SERVER "54.233.104.252"
 
 // MQTT
-// topic: "s</DEVICE_ID>", client_id: "s<DEVICE_ID>"
+// topic: "s</DEVICE_ID>"
 #define MQTT_TOPIC_PREFIX "s/"
-#define MQTT_CLIENT_PREFIX "s"
 #define MQTT_USERNAME "dalmago"
 #define MQTT_PASSWD "teste123"
 #define MQTT_KEEP_ALIVE 20
