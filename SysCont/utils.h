@@ -33,6 +33,7 @@ void uart_send_int(int);
 int buffer_find(const char *);
 int waitFor(const char*, const char*, unsigned short);
 void floatToBytes(float, unsigned char*, unsigned char*);
+void uitoa(char*, unsigned int);
 void generatePayload(unsigned char*, float, float);
 
 #endif

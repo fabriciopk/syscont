@@ -4,20 +4,27 @@
 
 #include <msp430.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "utils.h"
 #include "msp-cpu.h"
+#include "paho_mqtt_packet/MQTTPacket.h"
+
+#define DEVICE_ID 10
 
 #define APN "virtueyes.vivo.com.br"
-// #define APN "internetm2m.air.com"
+// #define APN "internetm2m.air.com" // telit
 // #define APN "zap.vivo.com.br"
 
-#define DEVICE_ID '7'
-// #define URL "mqtt.solveiot.com.br"
-#define URL "54.233.104.252"
+// #define SERVER "mqtt.solveiot.com.br"
+#define SERVER "54.233.104.252"
 
-#define MQTT_PUBLISH_FIRST_BYTE 0x30 // QOS 0
-
-#define MQTT_PUBLISH_TOPIC "s/7"
+// MQTT
+// topic: "s</DEVICE_ID>", client_id: "s<DEVICE_ID>"
+#define MQTT_TOPIC_PREFIX "s/"
+#define MQTT_CLIENT_PREFIX "s"
+#define MQTT_USERNAME "dalmago"
+#define MQTT_PASSWD "teste123"
+#define MQTT_KEEP_ALIVE 20
 
 uint8_t gprs_init();
 uint8_t gprs_connect();

@@ -1,16 +1,5 @@
 #include "gprs.h"
 
-const char MQTT_CONNECT[] = {
-                              0x10,  // CONNECT
-                              35,     // Remaining Length
-                              0, 6, 'M', 'Q', 'I', 's', 'd', 'p', 3, // Protocol
-                              0xC2,   // Username Flag + Password Flag + Clean Session
-                              0, 20,  // Keep Alive
-                              0, 2, 's', DEVICE_ID, // Client Id
-                              0, 7, 'd', 'a', 'l', 'm', 'a', 'g', 'o', // Username
-                              0, 8, 't', 'e', 's', 't', 'e', '1', '2', '3' // Password
-                            };
-
 uint8_t gprs_init(){
     // init = 0;
     // connected = 0;
@@ -22,7 +11,7 @@ uint8_t gprs_init(){
     // wait the module initialization proccess
     // CREG: 1 - local network
     // CREG: 5 - roaming
-    while (! waitFor("CREG: 1\r\n", "CREG: 5\r\n", 25000)){
+    while (! waitFor("CREG: 1\r\n", "CREG: 5\r\n", 40000)){
         if (++counter >= 5) return 0;
         gprs_powerCycle();
         uart_buffer_clear();
@@ -45,12 +34,16 @@ uint8_t gprs_init(){
     uart_buffer_clear();
 
 #ifdef DEBUG
+    // uart_send("AT+COPS=1,2,\"72404\"\r\n"); // SET_OPERATOR
+    // waitFor("OK\r\n", 0, 20000);
+    // uart_buffer_clear();
+
     uart_send("AT+COPS=3,0\r\n"); // EN_SHOW_OPERATOR
     waitFor("OK\r\n", 0, 2000);
     uart_buffer_clear();
 
     uart_send("AT+COPS?\r\n"); // CHECK_OPERATOR
-    waitFor("COPS: 1,", 0, 2000);
+    waitFor("OK\r\n", 0, 2000);
     uart_buffer_clear();
 #endif
 
@@ -111,7 +104,7 @@ uint8_t gprs_connect(){
             counter1 = 0;
         }
         uart_buffer_clear();
-        uart_send("AT+CIPSTART=\"TCP\",\""URL"\",1883\r\n"); // CONN_TCP
+        uart_send("AT+CIPSTART=\"TCP\",\""SERVER"\",1883\r\n"); // CONN_TCP
     } while(waitFor("OK\r\n", "ERROR", 15000) != 1);
     uart_buffer_clear();
 
@@ -121,30 +114,46 @@ uint8_t gprs_connect(){
 
 uint8_t gprs_send_data(float distance, float battery){
     if (! gprs_connect()) return 0;
+    uint8_t len;
 
-    unsigned char payload[5];
+    uint8_t payload[5];
     generatePayload(payload, distance, battery);
 
-    // MQTT
-    unsigned char publish[4];
-    publish[0] = MQTT_PUBLISH_FIRST_BYTE;
-    publish[1] = sizeof(payload) + sizeof(MQTT_PUBLISH_TOPIC) - 1 + 2;
-    publish[2] = 0;
-    publish[3] = sizeof(MQTT_PUBLISH_TOPIC) -1;
+    uint8_t buf[100];
+    uint8_t dev_id[6];
+    uitoa(dev_id, DEVICE_ID);
+
+    uint8_t client_id[sizeof(MQTT_CLIENT_PREFIX) + 5] = {MQTT_CLIENT_PREFIX};
+    strcat(client_id, dev_id);
+
+    uint8_t topic[sizeof(MQTT_TOPIC_PREFIX) + 5] = {MQTT_TOPIC_PREFIX};
+    strcat(topic, dev_id);
+
+    MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
+    MQTTString topicString = MQTTString_initializer;
+
+    data.clientID.cstring = client_id;
+    data.keepAliveInterval = MQTT_KEEP_ALIVE;
+    data.cleansession = 1;
+    data.username.cstring = MQTT_USERNAME;
+    data.password.cstring = MQTT_PASSWD;
+    data.MQTTVersion = 3;
+    topicString.cstring = topic;
+
+    len = MQTTSerialize_connect(buf, sizeof(buf), &data);
+    len += MQTTSerialize_publish((buf + len), sizeof(buf) - len, 0, 0, 0, 0, topicString, payload, sizeof(payload));
+    len += MQTTSerialize_disconnect((buf + len), sizeof(buf) - len);
 
     uart_buffer_clear();
+
     uart_send("AT+CIPSEND="); // SEND DATA
-    uart_send_int(sizeof(MQTT_CONNECT) + sizeof(publish) +
-                            sizeof(MQTT_PUBLISH_TOPIC) - 1 + sizeof(payload));
+    uart_send_int(len);
     uart_send("\r\n");
 
     waitFor("> ", 0, 3500);
     uart_buffer_clear();
 
-    uart_send_buffer(MQTT_CONNECT, sizeof(MQTT_CONNECT));
-    uart_send_buffer(publish, sizeof(publish));
-    uart_send(MQTT_PUBLISH_TOPIC);
-    uart_send_buffer(payload, sizeof(payload));
+    uart_send_buffer(buf, len);
 
     uart_buffer_clear();
     return waitFor("CIPRCV", 0, 10000);
