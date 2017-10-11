@@ -37,7 +37,6 @@ int main(void)
     WDTCTL = WDTPW + WDTHOLD; // Stop WDT
     i = 0;
     msp_init();
-    read_battery();
     // __bic_SR_register(GIE); // disable global interrupt flag
 
     boardOn();

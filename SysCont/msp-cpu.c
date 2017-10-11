@@ -85,7 +85,7 @@ float read_battery(){
 
 	ADC10CTL0 |= ENC + ADC10SC;			// Sampling and conversion start
 
-	while(!(ADC10CTL0 | ADC10IFG));
+	while(!(ADC10CTL0 & ADC10IFG));
 
 	value = ADC10MEM;
 
