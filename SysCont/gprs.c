@@ -123,13 +123,16 @@ uint8_t gprs_send_data(float distance, float battery){
     uint8_t dev_id[6];
     uitoa(dev_id, DEVICE_ID);
 
+    uint8_t client_id[sizeof(MQTT_CLIENT_PREFIX) + 5] = {MQTT_CLIENT_PREFIX};
+    strcat(client_id, dev_id);
+
     uint8_t topic[sizeof(MQTT_TOPIC_PREFIX) + 5] = {MQTT_TOPIC_PREFIX};
     strcat(topic, dev_id);
 
     MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
     MQTTString topicString = MQTTString_initializer;
 
-    data.clientID.cstring = "";
+    data.clientID.cstring = client_id;
     data.keepAliveInterval = MQTT_KEEP_ALIVE;
     data.cleansession = 1;
     data.username.cstring = MQTT_USERNAME;
