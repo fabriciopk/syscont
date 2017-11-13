@@ -17,7 +17,7 @@
 // #define APN "timbrasil.br"
 
 // #define SERVER "mqtt.solveiot.com.br"
-#define SERVER "54.233.104.252"
+#define SERVER "54.207.119.93"
 
 // MQTT
 // topic: "s</DEVICE_ID>", client_id: "s<DEVICE_ID>"
