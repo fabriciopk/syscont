@@ -11,13 +11,15 @@
 
 #define DEVICE_ID 10
 
-#define APN "virtueyes.vivo.com.br"
+// #define APN "virtueyes.vivo.com.br"
+#define APN "virtueyes.tim.br"
+// #define APN "virtueyes.claro.com.br"
 // #define APN "internetm2m.air.com" // telit
 // #define APN "zap.vivo.com.br"
 // #define APN "timbrasil.br"
 
 // #define SERVER "mqtt.solveiot.com.br"
-#define SERVER "54.207.119.93"
+#define SERVER "35.198.24.10"
 
 // MQTT
 // topic: "s</DEVICE_ID>", client_id: "s<DEVICE_ID>"
