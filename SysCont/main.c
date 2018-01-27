@@ -35,10 +35,10 @@ void configureIntTimer(void);
 int main(void)
 {
     WDTCTL = WDTPW + WDTHOLD; // Stop WDT
-    i = 0;
     msp_init();
     // __bic_SR_register(GIE); // disable global interrupt flag
 
+    delay(1000);
     boardOn();
     delay(2000);
 
@@ -64,6 +64,7 @@ int main(void)
 }
 
 void configureIntTimer(void){
+    i = 0;
     TACTL = TACLR;
     TACCR0 =  62500;                            // 500ms
     TACTL = TASSEL_2 + MC_1 + ID_3;           // SMCLK/8, upmode
@@ -96,7 +97,6 @@ __interrupt void Timer_A (void)
         // gprs_reset();
         boardOff();
 
-        i = 0;
         __bic_SR_register(GIE); // disable global interrupt flag
         configureIntTimer();
     }
