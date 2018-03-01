@@ -8,25 +8,15 @@ void msp_init(){
 
     // Setting the unused pins as outputs reduce power consumption
     P1DIR = ~(UART_RXD + VCC_4 + ECHO);
-    P2DIR = ~(ECHO2);
-
-    P1REN = ECHO;
-    P1OUT = ECHO;
+    P2DIR = 0xFF;
 
     // P1OUT = 0;
     P2OUT = BOARD_ON_OFF; // board off
-
-    P1SEL |= UART_RXD + UART_TXD ; // P1.1 = RXD, P1.2=TXD
-    P1SEL2 |= UART_RXD + UART_TXD ;
-
-    UCA0CTL1 |= UCSSEL_2; // SMCLK
 
     UCA0BR0 = 0x08; // 1MHz 115200
     UCA0BR1 = 0x00; // 1MHz 115200
 
     UCA0MCTL = UCBRS2 + UCBRS0; // Modulation UCBRSx = 5
-
-    UCA0CTL1 &= ~UCSWRST; // **Initialize USCI state machine**
 
     __bis_SR_register(GIE); // enable global interrupt flag
 }
@@ -96,4 +86,28 @@ float read_battery(){
 	ADC10CTL0 = 0; // disable ADC
 
 	return (float)v;
+}
+
+void boardOn(){
+    P1REN = ECHO;
+    P1OUT = ECHO;
+
+    P1SEL |= UART_RXD + UART_TXD ; // P1.1 = RXD, P1.2=TXD
+    P1SEL2 |= UART_RXD + UART_TXD ;
+    UCA0CTL1 |= UCSSEL_2; // SMCLK
+    UCA0CTL1 &= ~UCSWRST; // **Initialize USCI state machine**
+    delay(100);
+
+    P2OUT &= ~BOARD_ON_OFF;
+}
+
+void boardOff(){
+    P2OUT |= BOARD_ON_OFF;
+
+    delay(100);
+    P1REN = 0;
+    P1OUT = 0;
+    P1SEL = 0;
+    P1SEL2 = 0;
+    UCA0CTL1 = 0;
 }

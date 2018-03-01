@@ -11,14 +11,13 @@
 #define ledOff(led) (P1OUT &= ~(led))
 #define ledToggle(led) (P1OUT ^= (led))
 
-#define boardOn() (P2OUT &= ~BOARD_ON_OFF)
-#define boardOff() (P2OUT |= BOARD_ON_OFF)
-
 void msp_init();
 void uart_send(const char*);
 void uart_send_buffer(const char*, int);
 void delay(unsigned short);
 void uart_buffer_clear();
 float read_battery();
+void boardOn();
+void boardOff();
 
 #endif
