@@ -11,9 +11,7 @@
 
 #define DEVICE_ID 10
 
-// #define APN "virtueyes.vivo.com.br"
-#define APN "virtueyes.tim.br"
-// #define APN "virtueyes.claro.com.br"
+#define APN "hologram"
 // #define APN "internetm2m.air.com" // telit
 // #define APN "zap.vivo.com.br"
 // #define APN "timbrasil.br"
@@ -26,7 +24,7 @@
 #define MQTT_TOPIC_PREFIX "s/"
 #define MQTT_CLIENT_PREFIX "s"
 #define MQTT_USERNAME "dalmago"
-#define MQTT_PASSWD "teste123"
+#define MQTT_PASSWD ""
 #define MQTT_KEEP_ALIVE 20
 
 uint8_t gprs_init();

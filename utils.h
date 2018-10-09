@@ -18,8 +18,8 @@
 
 // P2
 #define BOARD_ON_OFF BIT2
-#define TRIGGER2 BIT3
-#define ECHO2 BIT4
+//#define TRIGGER2 BIT3
+//#define ECHO2 BIT4
 #define TRIGGER BIT5
 
 #define VOLTAGE_DIVIDER_FACTOR 4 // for the VCC
